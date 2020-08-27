@@ -1,0 +1,14 @@
+{
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "root",
+  "password": "eport",
+  "database": "nest_novel",
+  "entities": [
+    "dist/**/*.entity{.ts,.js}"
+  ],
+  "logging": true,
+  "autoLoadModels": true,
+  "synchronize": false
+}

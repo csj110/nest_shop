@@ -1,17 +1,25 @@
-import { Entity, Column, OneToMany } from "typeorm";
-import { AbstractEntity } from "./abstract.entity";
-import { type } from "os";
-import { ArticleEntity } from "./article.entity";
+import { Entity, Column, OneToMany, OneToOne, ManyToMany, JoinTable } from 'typeorm';
+import { AbstractEntity } from './abstract.entity';
+
+import { OrderEntity } from './order/order.entity';
+import { ProductEntity } from './product/prdouct.entity';
+import { AddrPostEntity } from './addr/address.entity';
 
 @Entity('users')
 export class UserEntity extends AbstractEntity {
-
-  @Column({ nullable: false, unique: true })
-  name: string
+  @Column({ nullable: false, default: 'no name' })
+  name: string;
 
   @Column({ nullable: false })
-  phone: string
+  phone: string;
 
-  @OneToMany(type => ArticleEntity, article => article.author)
-  opus: ArticleEntity[]
+  @OneToMany(type => OrderEntity, order => order.user)
+  orders: OrderEntity[];
+
+  @ManyToMany(type => ProductEntity)
+  @JoinTable()
+  cart: ProductEntity[];
+
+  @OneToMany(type => AddrPostEntity, addr => addr.user)
+  address: AddrPostEntity[];
 }

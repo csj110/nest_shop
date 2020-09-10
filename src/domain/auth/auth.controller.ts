@@ -3,18 +3,22 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {
+  constructor(private authService: AuthService) {}
 
-	}
+  @Post('captcha/login')
+  async genCaptcha(@Body('phone') phone: string) {
+    this.authService.genCaptcha(phone);
+  }
 
-	@Post("captcha/login")
-	async genCaptcha(@Body("phone") phone: string) {
-		this.authService.genCaptcha(phone)
-	}
+  @Post('login/code')
+  async loginByCode(@Body('phone') phone: string, @Body('code') code: string) {
+    const token = await this.authService.loginByCode(phone, code);
+    return token;
+  }
 
-	@Post("login/code")
-	async loginByCode(@Body("phone") phone: string, @Body("code") code: string) {
-		const token = await this.authService.loginByCode(phone, code)
-		return token
-	}
+  @Post('test')
+  async test(@Body('phone') phone: string) {
+    const token = await this.authService.login(phone);
+    return token;
+  }
 }

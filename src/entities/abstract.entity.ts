@@ -8,7 +8,7 @@ import { Exclude } from "class-transformer";
 
 export abstract class AbstractEntity extends BaseEntity {
   @Exclude()
-  @PrimaryGeneratedColumn("increment") id: string;
+  @PrimaryGeneratedColumn() id: number;
   @Exclude()
   @CreateDateColumn() created: Date;
   @Exclude()

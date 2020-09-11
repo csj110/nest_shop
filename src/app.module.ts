@@ -8,8 +8,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProdCateModule } from './domain/prod-cate/prod-cate.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProdModule } from './domain/prod/prod.module';
-import { AddrController } from './domain/addr/addr.controller';
 import { AddrModule } from './domain/addr/addr.module';
+import { CateEntity } from './entities/category/cate.product.entity';
+import { ShopEntity } from './entities/shop/shop.entity';
+import { ProductEntity } from './entities/product/prdouct.entity';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { AddrModule } from './domain/addr/addr.module';
     ProdCateModule,
     ProdModule,
     AddrModule,
+    TypeOrmModule.forFeature([CateEntity, ShopEntity, ProductEntity]),
   ],
   controllers: [AppController],
   providers: [AppService],

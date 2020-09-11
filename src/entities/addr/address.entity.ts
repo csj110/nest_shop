@@ -1,32 +1,18 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { UserEntity } from '../user.entity';
 import { Expose, Exclude, classToPlain } from 'class-transformer';
+import { BasePostAddr } from './addr.base.entity';
 
 @Entity()
 export class AddrPostEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
-
-  @Column()
-  province: string;
-
-  @Column()
-  city: string;
-
-  @Column()
-  county: string;
-
-  @Column()
-  area: string;
+  id: number;
 
   @Column({ default: false })
   default: boolean;
 
-  @Column({ name: 'receiver_name' })
-  receivername: string;
-
-  @Column({ name: 'receiver_phone' })
-  receiverphone: string;
+  @Column(type => BasePostAddr)
+  addr: BasePostAddr;
 
   @Exclude()
   @ManyToOne(type => UserEntity, u => u.address)
@@ -34,7 +20,7 @@ export class AddrPostEntity extends BaseEntity {
 
   @Expose({ name: 'address' })
   address() {
-    return this.province + this.city + this.county + this.area;
+    return this.addr.province + this.addr.city + this.addr.county + this.addr.area;
   }
 
   toJson() {

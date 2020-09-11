@@ -1,4 +1,4 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ShopEntity } from './shop.entity';
 
 @Entity()
@@ -9,6 +9,10 @@ export class BannerEntity extends BaseEntity {
   @Column()
   img: string;
 
-  @ManyToOne(type => ShopEntity, shop => shop.banners)
+  @Column({ nullable: true })
+  shopId: number;
+
+  @ManyToOne(type => ShopEntity)
+  @JoinColumn()
   shop: ShopEntity;
 }

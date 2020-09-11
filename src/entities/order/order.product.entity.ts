@@ -5,20 +5,20 @@ export class OrderProductEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'int' })
   price: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   image: string;
 
-  @Column()
+  @Column({ type: 'tinyint' })
   quantity: number;
 
-  @Column() // 对应产品的id
-  pid: number;
+  @Column({ type: 'varchar', length: 30 }) // 对应产品的id
+  pid: string;
 
   @ManyToOne(type => OrderEntity, order => order.products)
   order: OrderEntity[];

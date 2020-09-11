@@ -32,6 +32,7 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
+    "formdata-node": "^2.4.0",
     "moment": "^2.27.0",
     "mysql": "^2.18.1",
     "nestjs-redis": "^1.2.8",

@@ -5,19 +5,19 @@ export class CartItemEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ comment: '商品图片' })
   image: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 50 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 30 })
   pid: string;
 
-  @Column()
+  @Column({ type: 'tinyint' })
   number: string;
-  
-  @Column()
+
+  @Column({ type: 'int' })
   price: number;
 
   @Column()

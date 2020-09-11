@@ -1,40 +1,46 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { UserEntity } from '../user.entity';
 import { OrderProductEntity } from './order.product.entity';
 import { AbstractEntity } from '../abstract.entity';
 import { AddrPostEntity } from '../addr/address.entity';
+import { classToPlain, Expose } from 'class-transformer';
+import { ShopEntity } from '../shop/shop.entity';
 
 @Entity('shop_orders')
 export class OrderEntity extends AbstractEntity {
-
-  @Column()
+  @Column({ type: 'varchar', length: 8 })
   province: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 20 })
   city: string;
 
-  @Column()
-  county: number;
+  @Column({ type: 'varchar', length: 20 })
+  county: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 40 })
   area: string;
-
-  @Column({ name: 'receiver_name' })
+  @Column({ name: 'receiver_name', type: 'varchar', length: '15' })
   receivername: string;
 
-  @Column({ name: 'receiver_phone' })
+  @Column({ name: 'receiver_phone', type: 'varchar', length: '20' })
   receiverphone: string;
 
-  @Column() //1 创建 ,2 已确认 ,3 以发货, 4 已完成 , -1 已取消
+  @Column({
+    type: 'tinyint',
+    comment: '//1.创建,2.已确认,3.以发货,4.已完成,-1.已取消',
+  })
   state: number;
 
-  @Column()
+  @Column({ type: 'int' })
   price: number;
 
-  @Column()
+  @Column('smallint')
   freight: number;
 
-  total = this.price + this.freight;
+  @Expose({ name: 'address' })
+  get address() {
+    return this.province + this.city + this.county + this.area;
+  }
 
   @ManyToOne(type => AddrPostEntity)
   @JoinColumn()
@@ -45,4 +51,15 @@ export class OrderEntity extends AbstractEntity {
 
   @OneToMany(type => OrderProductEntity, orderProduct => orderProduct.order)
   products: OrderProductEntity[];
+
+  @Column({ type: 'tinyint', nullable: true })
+  shopId: number;
+
+  @ManyToOne(type => ShopEntity)
+  @JoinColumn()
+  shop: ShopEntity;
+
+  toJson() {
+    return classToPlain(this);
+  }
 }

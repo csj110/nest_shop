@@ -8,9 +8,9 @@ export class ProductImageEntity extends BaseEntity {
   @Column()
   url: string;
 
-  @Column()
+  @Column({ type: 'tinyint' })
   sort: number;
 
   @ManyToOne(type => ProductEntity, p => p.detailImages)
-  prod:ProductEntity
+  prod: ProductEntity;
 }

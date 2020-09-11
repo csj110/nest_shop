@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CateEntity } from 'src/entities/category/cate.product.entity';
 import { TreeRepository } from 'typeorm';
-import { Timeout } from '@nestjs/schedule';
+
 
 @Injectable()
 export class ProdCateService {

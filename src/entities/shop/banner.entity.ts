@@ -1,18 +1,14 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ShopEntity } from './shop.entity';
 
-@Entity()
+@Entity("banners")
 export class BannerEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 50, default: "" })
   img: string;
 
   @Column({ nullable: true })
   shopId: number;
-
-  @ManyToOne(type => ShopEntity)
-  @JoinColumn()
-  shop: ShopEntity;
 }

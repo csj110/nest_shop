@@ -8,11 +8,14 @@ import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
 @Injectable()
 export class AppService {
+
+
   constructor(
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>,
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>
-  ) {}
+  ) { }
+
 
   async load() {
     const src = [
@@ -139,35 +142,33 @@ export class AppService {
       },
     ];
     let shop = await this.shopRepo.findOne({ name: 'Cai' });
+    if (!shop) shop = await this.shopRepo.save({ name: 'Cai' })
+    for (let i of src) {
+      await this.cateRepo.save({ name: i.category_name, level: i.level, pid: "" + i.category_id, shopId: shop.id });
+    }
+    for (const i of src1) {
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id } });
+      if (!cateP) return;
+      await this.cateRepo.save({
+        name: i.category_name,
+        level: i.level,
+        pid: i.category_id + "",
+        shopId: shop.id,
+        parent: cateP,
+      });
+    }
 
-    // for (let i of src) {
-    //   await this.cateRepo.save({ name: i.category_name, level: i.level, pid: i.category_id, shopId: shop.id });
-    //   console.log(i);
-    // }
-    // console.log('2');
-    // for (const i of src1) {
-    //   const cateP = await this.cateRepo.findOne({ shopId: shop.id, pid: i.parent_id });
-    //   if (!cateP) return;
-    //   await this.cateRepo.save({
-    //     name: i.category_name,
-    //     level: i.level,
-    //     pid: i.category_id,
-    //     shopId: shop.id,
-    //     parent: cateP,
-    //   });
-    // }
-
-    // for (const i of src2) {
-    //   const cateP = await this.cateRepo.findOne({ shopId: shop.id, pid: i.parent_id });
-    //   if (!cateP) return;
-    //   await this.cateRepo.save({
-    //     name: i.category_name,
-    //     level: i.level,
-    //     pid: i.category_id,
-    //     shopId: shop.id,
-    //     parent: cateP,
-    //   });
-    // }
+    for (const i of src2) {
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id } });
+      if (!cateP) return;
+      await this.cateRepo.save({
+        name: i.category_name,
+        level: i.level,
+        pid: i.category_id + "",
+        shopId: shop.id,
+        parent: cateP,
+      });
+    }
   }
 
   async findAll() {
@@ -179,25 +180,24 @@ export class AppService {
     return resList;
   }
 
-  @Timeout(2000)
+  @Timeout(10000)
   async loadProd() {
     const cates = await this.cateRepo.find({ where: { level: 3 } });
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < a.length; i++) {
       const p = a[i];
-      const prod:ProductEntity = await this.prodRepo.save({
+      const prod: ProductEntity = await this.prodRepo.create({
         pid: p.spuId,
         pname: p.name,
-        price: parseInt(p.spuId) * 100,
-        cover: p.listPicUrl,
+        price: parseInt(p.userPrice) * 100,
+        cover: p.listPicUrl || "",
         shopId: 1,
       });
-
       const index = Math.floor(Math.random() * cates.length);
-
-      const cateAnsList = await this.cateRepo.findAncestors(cates[index]);
-
-      prod.cates = [...cateAnsList, cates[index]];
+      prod.cate = cates[index];
       await prod.save();
+      console.log("*****************************");
+      console.log(i);
+      console.log("*****************************");
     }
   }
 }

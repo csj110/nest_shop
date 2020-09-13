@@ -9,10 +9,10 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { CateEntity } from '../category/cate.product.entity';
-import { ShopEntity } from '../shop/shop.entity';
+
 import { ProductImageEntity } from './images.entity';
 
-@Entity('shop_products')
+@Entity('products')
 export class ProductEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,7 +23,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   pname: string;
 
-  @Column({ comment: '封面图片' })
+  @Column({ comment: '封面图片', default: "" })
   cover: string;
 
   @Column({ type: 'int' })
@@ -38,13 +38,12 @@ export class ProductEntity extends BaseEntity {
   @OneToMany(type => ProductImageEntity, image => image.prod)
   detailImages: ProductImageEntity[];
 
-  @ManyToMany(type => CateEntity, cate => cate.prods)
-  cates: CateEntity[];
+  @ManyToOne(type => CateEntity, cate => cate.prods)
+  cate: CateEntity;
 
-  @Column({ nullable: true })
+  @Column({ type: "smallint", nullable: true })
+  cateId: number;
+
+  @Column({ type: "tinyint", nullable: true })
   shopId: number;
-
-  @ManyToOne(type => ShopEntity)
-  @JoinColumn()
-  shop: ShopEntity;
 }

@@ -3,18 +3,14 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   TreeParent,
   TreeChildren,
   Tree,
-  ManyToMany,
-  JoinColumn,
-  JoinTable,
+  OneToMany
 } from 'typeorm';
 import { ProductEntity } from '../product/prdouct.entity';
-import { ShopEntity } from '../shop/shop.entity';
 
-@Entity('product_cate')
+@Entity('cate')
 @Tree('materialized-path')
 export class CateEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -38,14 +34,9 @@ export class CateEntity extends BaseEntity {
   @TreeChildren()
   children: CateEntity[];
 
-  @ManyToMany(type => ProductEntity, p => p.cates)
-  @JoinTable()
+  @OneToMany(() => ProductEntity, p => p.cate)
   prods: ProductEntity[];
 
   @Column({ type: 'tinyint', nullable: true })
   shopId: number;
-
-  @ManyToOne(type => ShopEntity)
-  @JoinColumn()
-  shop: ShopEntity;
 }

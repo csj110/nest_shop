@@ -6,7 +6,7 @@ import { AddrPostEntity } from '../addr/address.entity';
 import { classToPlain, Expose } from 'class-transformer';
 import { ShopEntity } from '../shop/shop.entity';
 
-@Entity('shop_orders')
+@Entity('orders')
 export class OrderEntity extends AbstractEntity {
   @Column({ type: 'varchar', length: 8 })
   province: string;

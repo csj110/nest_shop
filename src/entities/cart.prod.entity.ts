@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 
-@Entity('cart_prod')
+@Entity('cartProd')
 export class CartItemEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

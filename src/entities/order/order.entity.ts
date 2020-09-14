@@ -5,7 +5,7 @@ import { AbstractEntity } from '../abstract.entity';
 import { AddrPostEntity } from '../addr/address.entity';
 import { classToPlain, Expose } from 'class-transformer';
 
-import { OrderRecordEntity } from './order.state.revord';
+import { OrderRecordEntity } from './order.record.entity';
 
 export enum OrderState {
   CREATED = 1,
@@ -66,11 +66,12 @@ export class OrderEntity extends AbstractEntity {
   @OneToMany(type => OrderProductEntity, orderProduct => orderProduct.order)
   products: OrderProductEntity[];
 
+  @OneToMany(type => OrderRecordEntity, record => record.order)
+  records: OrderRecordEntity[];
+
   @Column({ type: 'tinyint', unsigned: true, nullable: true })
   shopId: number;
 
-  @OneToMany(type => OrderRecordEntity, record => record.order)
-  records: OrderRecordEntity[];
 
   toJson() {
     return classToPlain(this);

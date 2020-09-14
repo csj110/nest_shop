@@ -6,13 +6,15 @@ import { CateEntity } from './entities/category/cate.product.entity';
 import { ShopEntity } from './entities/shop/shop.entity';
 import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
+import { blApi } from './services/bl.api'
+
 @Injectable()
 export class AppService {
   constructor(
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>,
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>
-  ) {}
+  ) { }
   // @Timeout(2000)
   async load() {
     const src = [
@@ -199,5 +201,10 @@ export class AppService {
         console.log('************');
       }
     }
+  }
+  @Timeout(200)
+  async test() {
+    const res = await blApi.fetchToken({ clientId: "B229933192251933", clientSecret: "2d4de94a2b9749a596e4599cc2beaca7" })
+    console.log(res);
   }
 }

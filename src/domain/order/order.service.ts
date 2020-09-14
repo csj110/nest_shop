@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderCreateDto } from 'src/dto/order.dto';
 import { OrderEntity, OrderState } from 'src/entities/order/order.entity';
 import { OrderProductEntity } from 'src/entities/order/order.product.entity';
-import { OrderRecordEntity } from 'src/entities/order/order.state.revord';
+import { OrderRecordEntity } from 'src/entities/order/order.record.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository, Transaction } from 'typeorm';

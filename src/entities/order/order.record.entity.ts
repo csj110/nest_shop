@@ -13,5 +13,5 @@ export class OrderRecordEntity extends BaseEntity {
   message: string;
 
   @ManyToOne(type => OrderEntity, order => order.records)
-  order: OrderEntity;
+  order: OrderEntity
 }

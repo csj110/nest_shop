@@ -1,27 +1,29 @@
-const axios = require('axios');
-const querystring = require('querystring');
-const crypto = require('crypto');
-const md5 = crypto.createHash('md5');
-var FormData = require('formdata-node');
+const axios = require("axios");
+const querystring = require("querystring");
+const crypto = require("crypto");
+const md5 = crypto.createHash("md5");
+var FormData = require("formdata-node");
 const http = axios.create({
-	baseURL: 'http://openapi3testb.sfbest.com',
-	headers: {
-		'Content-Type': 'multipart/form-data',
-		Authorization: 'Basic MjAxODEyMTgxNjQxNTc4Mzo5MDU2M2NiYzI0OTg0N2ZjYWI3OGE1YWQ1MzZkZTg1Ng=='
-	}
+  baseURL: "http://openapitestb.benlai.com",
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "Authorization":
+			"Basic QjIyOTkzMzE5MjI1MTkzMzoyZDRkZTk0YTJiOTc0OWE1OTZlNDU5OWNjMmJlYWNhNw==",
+			"X-Real-IP":"119.28.59.171"
+  }
 });
 
 const data = new FormData();
 
-data.set('grant_type', 'client_credentials');
-data.set('scope', 'all');
+data.set("grant_type", "client_credentials");
+data.set("scope", "yghwechat");
 console.log(data);
-http.post('token', data).then((res) => {
-	console.log(res);
-});
-http.get('https://www.npmjs.com/package/formdata-node').then((res) => {
-	console.log('res');
-});
+http
+  .post("token", data)
+  .then(res => {
+    console.log(res);
+  })
+  .catch(err => console.log(err));
 setTimeout(() => {
-	console.log('object');
+  console.log("object");
 }, 1000 * 5);

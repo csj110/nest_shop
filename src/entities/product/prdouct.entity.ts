@@ -1,20 +1,12 @@
-import {
-  Entity,
-  BaseEntity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  ManyToMany,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { CateEntity } from '../category/cate.product.entity';
 
-import { ProductImageEntity } from './images.entity';
+import { DetailImageEntity } from './image.detail.entity';
+import { SwiperEntity } from './swiper.prod.entity';
 
 @Entity('products')
 export class ProductEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;
 
   @Column({ type: 'varchar', length: 50 })
@@ -23,7 +15,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   pname: string;
 
-  @Column({ comment: '封面图片', default: "" })
+  @Column({ type: 'varchar', length: 100, comment: '封面图片', default: '' })
   cover: string;
 
   @Column({ type: 'int' })
@@ -35,15 +27,18 @@ export class ProductEntity extends BaseEntity {
   @Column('smallint', { default: 3000 })
   inventory: number;
 
-  @OneToMany(type => ProductImageEntity, image => image.prod)
-  detailImages: ProductImageEntity[];
+  @OneToMany(type => DetailImageEntity, image => image.prod)
+  detailImages: DetailImageEntity[];
+
+  @OneToMany(type => SwiperEntity, s => s.prod)
+  swipers: SwiperEntity[];
 
   @ManyToOne(type => CateEntity, cate => cate.prods)
   cate: CateEntity;
 
-  @Column({ type: "smallint", nullable: true })
+  @Column({ type: 'mediumint', unsigned: true, nullable: true })
   cateId: number;
 
-  @Column({ type: "tinyint", nullable: true })
+  @Column({ nullable: true })
   shopId: number;
 }

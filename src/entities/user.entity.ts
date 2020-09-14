@@ -2,8 +2,8 @@ import { Entity, Column, OneToMany, OneToOne, ManyToMany, JoinTable } from 'type
 import { AbstractEntity } from './abstract.entity';
 
 import { OrderEntity } from './order/order.entity';
-import { ProductEntity } from './product/prdouct.entity';
 import { AddrPostEntity } from './addr/address.entity';
+import { CartItemEntity } from './cart.entity';
 
 @Entity('users')
 export class UserEntity extends AbstractEntity {
@@ -16,9 +16,8 @@ export class UserEntity extends AbstractEntity {
   @OneToMany(type => OrderEntity, order => order.user)
   orders: OrderEntity[];
 
-  @ManyToMany(type => ProductEntity)
-  @JoinTable()
-  cart: ProductEntity[];
+  @OneToMany(type => CartItemEntity, c => c.user)
+  cart: CartItemEntity[];
 
   @OneToMany(type => AddrPostEntity, addr => addr.user)
   address: AddrPostEntity[];

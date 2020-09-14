@@ -1,8 +1,8 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { OrderEntity } from './order.entity';
-@Entity('orderProducts')
+@Entity('orderproducts')
 export class OrderProductEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
   @Column({ type: 'int' })
@@ -12,9 +12,9 @@ export class OrderProductEntity extends BaseEntity {
   name: string;
 
   @Column({ type: 'varchar', length: 50 })
-  image: string;
+  cover: string;
 
-  @Column({ type: 'tinyint' })
+  @Column({ type: 'tinyint', unsigned: true })
   quantity: number;
 
   @Column({ type: 'varchar', length: 30 }) // 对应产品的id

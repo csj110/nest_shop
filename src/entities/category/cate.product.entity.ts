@@ -1,25 +1,16 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  TreeParent,
-  TreeChildren,
-  Tree,
-  OneToMany
-} from 'typeorm';
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, TreeParent, TreeChildren, Tree, OneToMany } from 'typeorm';
 import { ProductEntity } from '../product/prdouct.entity';
 
 @Entity('cate')
 @Tree('materialized-path')
 export class CateEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;
 
   @Column({ type: 'varchar', unique: true })
   name: string;
 
-  @Column({ type: 'tinyint', default: 1 }) // 1. 1级 2.2级  3.3级
+  @Column({ type: 'tinyint', unsigned: true, default: 1 }) // 1. 1级 2.2级  3.3级
   level: number;
 
   @Column({ default: '' })

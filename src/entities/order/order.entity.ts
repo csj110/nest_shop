@@ -4,7 +4,16 @@ import { OrderProductEntity } from './order.product.entity';
 import { AbstractEntity } from '../abstract.entity';
 import { AddrPostEntity } from '../addr/address.entity';
 import { classToPlain, Expose } from 'class-transformer';
-import { ShopEntity } from '../shop/shop.entity';
+
+import { OrderRecordEntity } from './order.state.revord';
+
+export enum OrderState {
+  CREATED = 1,
+  PAYED = 2,
+  DELIVERIED = 3,
+  FINISHED = 4,
+  CANCELED = -1,
+}
 
 @Entity('orders')
 export class OrderEntity extends AbstractEntity {
@@ -26,16 +35,21 @@ export class OrderEntity extends AbstractEntity {
   receiverphone: string;
 
   @Column({
-    type: 'tinyint',
-    comment: '//1.创建,2.已确认,3.以发货,4.已完成,-1.已取消',
+    type: 'enum',
+    enum: OrderState,
+    default: OrderState.CREATED,
+    comment: '//1.创建,2.已支付,3.以发货,4.已完成,-1.已取消',
   })
   state: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', unsigned: true })
   price: number;
 
-  @Column('smallint')
+  @Column({ type: 'smallint', unsigned: true })
   freight: number;
+
+  @Column({ type: 'varchar', length: 50 })
+  oid: string;
 
   @Expose({ name: 'address' })
   get address() {
@@ -52,12 +66,11 @@ export class OrderEntity extends AbstractEntity {
   @OneToMany(type => OrderProductEntity, orderProduct => orderProduct.order)
   products: OrderProductEntity[];
 
-  @Column({ type: 'tinyint', nullable: true })
+  @Column({ type: 'tinyint', unsigned: true, nullable: true })
   shopId: number;
 
-  @ManyToOne(type => ShopEntity)
-  @JoinColumn()
-  shop: ShopEntity;
+  @OneToMany(type => OrderRecordEntity, record => record.order)
+  records: OrderRecordEntity[];
 
   toJson() {
     return classToPlain(this);

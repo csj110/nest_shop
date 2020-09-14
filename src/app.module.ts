@@ -12,6 +12,8 @@ import { AddrModule } from './domain/addr/addr.module';
 import { CateEntity } from './entities/category/cate.product.entity';
 import { ShopEntity } from './entities/shop/shop.entity';
 import { ProductEntity } from './entities/product/prdouct.entity';
+import { CartModule } from './domain/cart/cart.module';
+import { OrderModule } from './domain/order/order.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { ProductEntity } from './entities/product/prdouct.entity';
     ProdModule,
     AddrModule,
     TypeOrmModule.forFeature([CateEntity, ShopEntity, ProductEntity]),
+    CartModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

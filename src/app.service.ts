@@ -8,15 +8,12 @@ import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
 @Injectable()
 export class AppService {
-
-
   constructor(
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>,
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>
-  ) { }
-
-
+  ) {}
+  // @Timeout(2000)
   async load() {
     const src = [
       {
@@ -141,10 +138,10 @@ export class AppService {
         level: 3,
       },
     ];
-    let shop = await this.shopRepo.findOne({ name: 'Cai' });
-    if (!shop) shop = await this.shopRepo.save({ name: 'Cai' })
+    let shop = await this.shopRepo.findOne({ name: 'BenlaiShenghuo' });
+    if (!shop) shop = await this.shopRepo.save({ name: 'BenlaiShenghuo' });
     for (let i of src) {
-      await this.cateRepo.save({ name: i.category_name, level: i.level, pid: "" + i.category_id, shopId: shop.id });
+      await this.cateRepo.save({ name: i.category_name, level: i.level, pid: '' + i.category_id, shopId: shop.id });
     }
     for (const i of src1) {
       const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id } });
@@ -152,7 +149,7 @@ export class AppService {
       await this.cateRepo.save({
         name: i.category_name,
         level: i.level,
-        pid: i.category_id + "",
+        pid: i.category_id + '',
         shopId: shop.id,
         parent: cateP,
       });
@@ -164,7 +161,7 @@ export class AppService {
       await this.cateRepo.save({
         name: i.category_name,
         level: i.level,
-        pid: i.category_id + "",
+        pid: i.category_id + '',
         shopId: shop.id,
         parent: cateP,
       });
@@ -180,24 +177,27 @@ export class AppService {
     return resList;
   }
 
-  @Timeout(10000)
+  // @Timeout(10000)
   async loadProd() {
     const cates = await this.cateRepo.find({ where: { level: 3 } });
     for (let i = 0; i < a.length; i++) {
-      const p = a[i];
-      const prod: ProductEntity = await this.prodRepo.create({
-        pid: p.spuId,
-        pname: p.name,
-        price: parseInt(p.userPrice) * 100,
-        cover: p.listPicUrl || "",
-        shopId: 1,
-      });
-      const index = Math.floor(Math.random() * cates.length);
-      prod.cate = cates[index];
-      await prod.save();
-      console.log("*****************************");
-      console.log(i);
-      console.log("*****************************");
+      try {
+        const p = a[i];
+        const prod: ProductEntity = await this.prodRepo.create({
+          pid: p.spuId,
+          pname: p.name,
+          price: parseInt(p.userPrice) * 100,
+          cover: p.listPicUrl,
+          shopId: 1,
+        });
+        const index = Math.floor(Math.random() * cates.length);
+        prod.cate = cates[index];
+        await prod.save();
+      } catch (error) {
+        console.log('************');
+        console.log(a[i]);
+        console.log('************');
+      }
     }
   }
 }

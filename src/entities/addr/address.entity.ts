@@ -3,9 +3,9 @@ import { UserEntity } from '../user.entity';
 import { Expose, Exclude, classToPlain } from 'class-transformer';
 import { BasePostAddr } from './addr.base.entity';
 
-@Entity("addrPost")
+@Entity('addrpost')
 export class AddrPostEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
   @Column({ default: false })

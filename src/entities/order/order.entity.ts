@@ -2,7 +2,6 @@ import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { UserEntity } from '../user.entity';
 import { OrderProductEntity } from './order.product.entity';
 import { AbstractEntity } from '../abstract.entity';
-import { AddrPostEntity } from '../addr/address.entity';
 import { classToPlain, Expose } from 'class-transformer';
 
 import { OrderRecordEntity } from './order.record.entity';
@@ -56,10 +55,6 @@ export class OrderEntity extends AbstractEntity {
     return this.province + this.city + this.county + this.area;
   }
 
-  @ManyToOne(type => AddrPostEntity)
-  @JoinColumn()
-  addr: AddrPostEntity;
-
   @ManyToOne(type => UserEntity, user => user.orders)
   user: UserEntity;
 
@@ -71,7 +66,6 @@ export class OrderEntity extends AbstractEntity {
 
   @Column({ type: 'tinyint', unsigned: true, nullable: true })
   shopId: number;
-
 
   toJson() {
     return classToPlain(this);

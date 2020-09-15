@@ -11,18 +11,20 @@ export class CartService {
   constructor(
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>
-  ) { }
+  ) {}
 
   async getItems(shopId: number, user: UserEntity) {
     return await this.cartRepo.find({
-      select: ["number"], join: {
-        alias: "cart", leftJoinAndSelect: {
-          price: "prod.cart",
-          cover: "prod.cover",
-          id: "prod.id"
-        }
-      }, where: { userId: user.id, shopId }
-    })
+      select: ['number'],
+      join: {
+        alias: 'item',
+        leftJoinAndSelect: {
+          prod: 'item.prod',
+          name: 'prod.pname',
+        },
+      },
+      where: { userId: user.id, shopId },
+    });
   }
 
   async addToCart(prodId: number, user: UserEntity, number?: number): Promise<any> {

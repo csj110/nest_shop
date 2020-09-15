@@ -202,7 +202,7 @@ export class AppService {
       }
     }
   }
-  @Timeout(200)
+  // @Timeout(200)
   async test() {
     const res = await blApi.fetchToken({ clientId: "B229933192251933", clientSecret: "2d4de94a2b9749a596e4599cc2beaca7" })
     console.log(res);

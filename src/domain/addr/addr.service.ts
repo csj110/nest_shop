@@ -2,16 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/entities/user.entity';
 import { AddrPostEntity } from 'src/entities/addr/address.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, ObjectID, Repository } from 'typeorm';
+import { ObjectID, Repository } from 'typeorm';
 import { AddrDto } from 'src/dto/addr.dto';
+import { FindOptions } from 'typeorm/find-options/FindOptions';
 
 @Injectable()
 export class AddrService {
-  constructor(@InjectRepository(AddrPostEntity) private addrRepo: Repository<AddrPostEntity>) {}
+  constructor(@InjectRepository(AddrPostEntity) private addrRepo: Repository<AddrPostEntity>) { }
 
   async mustFindOne(
     id?: string | number | Date | ObjectID,
-    options?: FindOneOptions<AddrPostEntity>
+    options?: FindOptions<AddrPostEntity>
   ): Promise<AddrPostEntity> {
     const addr = await this.addrRepo.findOne(id, options);
     if (!addr) throw new BadRequestException('地址不存在');
@@ -46,6 +47,6 @@ export class AddrService {
   async deleteAddr(addrId: number, user: UserEntity) {
     let addr = await this.mustFindOne(addrId, { where: { user } });
     // TODO need to be tested
-    await addr.softRemove();
+    await addr.remove()
   }
 }

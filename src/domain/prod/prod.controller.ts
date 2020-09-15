@@ -4,7 +4,7 @@ import { ProdService } from './prod.service';
 
 @Controller('prod')
 export class ProdController {
-  constructor(private prodSesrvice: ProdService) {}
+  constructor(private prodSesrvice: ProdService) { }
 
   @Get(':id')
   async findById(@Param('id') prodId: number) {
@@ -13,7 +13,6 @@ export class ProdController {
 
   @Get('/cate')
   async findProdByCate(@Body() queryDto: ProdCateQueryDto) {
-    console.log(queryDto.order);
     return await this.prodSesrvice.findByCate(
       queryDto.cateId,
       queryDto.shopId,

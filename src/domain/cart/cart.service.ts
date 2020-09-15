@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ESTALE } from 'constants';
+
 import { CartItemEntity } from 'src/entities/cart.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
 import { UserEntity } from 'src/entities/user.entity';
@@ -11,17 +11,13 @@ export class CartService {
   constructor(
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>
-  ) {}
+  ) { }
 
   async getItems(shopId: number, user: UserEntity) {
     return await this.cartRepo.find({
-      select: ['number'],
-      join: {
-        alias: 'item',
-        leftJoinAndSelect: {
-          prod: 'item.prod',
-          name: 'prod.pname',
-        },
+      select: {
+        number: true,
+        prod: ['pname', 'price', 'cover', 'inventory']
       },
       where: { userId: user.id, shopId },
     });

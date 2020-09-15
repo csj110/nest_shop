@@ -39,7 +39,6 @@ export class AppService {
         level: 1,
       },
     ];
-
     const src1 = [
       {
         category_id: 6,
@@ -146,7 +145,7 @@ export class AppService {
       await this.cateRepo.save({ name: i.category_name, level: i.level, pid: '' + i.category_id, shopId: shop.id });
     }
     for (const i of src1) {
-      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id } });
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + "" } });
       if (!cateP) return;
       await this.cateRepo.save({
         name: i.category_name,
@@ -158,7 +157,7 @@ export class AppService {
     }
 
     for (const i of src2) {
-      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id } });
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + "" } });
       if (!cateP) return;
       await this.cateRepo.save({
         name: i.category_name,

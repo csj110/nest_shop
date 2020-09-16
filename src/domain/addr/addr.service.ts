@@ -2,9 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/entities/user.entity';
 import { AddrPostEntity } from 'src/entities/addr/address.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ObjectID, Repository } from 'typeorm';
+import { FindOneOptions, ObjectID, Repository } from 'typeorm';
 import { AddrDto } from 'src/dto/addr.dto';
-import { FindOptions } from 'typeorm/find-options/FindOptions';
 
 @Injectable()
 export class AddrService {
@@ -12,7 +11,7 @@ export class AddrService {
 
   async mustFindOne(
     id?: string | number | Date | ObjectID,
-    options?: FindOptions<AddrPostEntity>
+    options?: FindOneOptions<AddrPostEntity>
   ): Promise<AddrPostEntity> {
     const addr = await this.addrRepo.findOne(id, options);
     if (!addr) throw new BadRequestException('地址不存在');

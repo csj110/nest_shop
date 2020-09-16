@@ -11,16 +11,17 @@ export class CartService {
   constructor(
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>
-  ) { }
+  ) {}
 
   async getItems(shopId: number, user: UserEntity) {
-    return await this.cartRepo.find({
-      select: {
-        number: true,
-        prod: ['pname', 'price', 'cover', 'inventory']
-      },
-      where: { userId: user.id, shopId },
-    });
+    return await this.cartRepo
+      .createQueryBuilder('i')
+      .innerJoinAndSelect('i.prod', 'p')
+      .select('i.number', 'number')
+      .addSelect(['p.pname', 'p.cover', 'p.price', 'p.inventory'])
+      .where('i.userId = :userId', { userId: user.id })
+      .andWhere('i.shopId = :shopId', { shopId })
+      .getRawMany();
   }
 
   async addToCart(prodId: number, user: UserEntity, number?: number): Promise<any> {

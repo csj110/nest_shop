@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CartItemEntity } from 'src/entities/cart.entity';
 import { CateEntity } from 'src/entities/category/cate.product.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
-import { Repository, TreeRepository, In, Any } from 'typeorm';
-import { FindOptions, FindOptionsOrder } from 'typeorm/find-options/FindOptions';
+import { Repository, TreeRepository, In, Any, FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class ProdService {
@@ -18,8 +17,8 @@ export class ProdService {
     return await this.prodRepo.findOne(id, { relations: ['detailImages'] });
   }
 
-  async findAll(shopId: number, page: number, perPage: number, order?: FindOptionsOrder<ProductEntity>) {
-    const query: FindOptions<ProductEntity> = {
+  async findAll(shopId: number, page: number, perPage: number, order?) {
+    const query: FindManyOptions<ProductEntity> = {
       select: ['price', 'pname', 'cover'],
       take: perPage,
       skip: perPage * (page - 1),
@@ -29,10 +28,10 @@ export class ProdService {
     await this.prodRepo.find(query);
   }
 
-  async findByCate(cateId: number, shopId: number, page: number, perPage: number, order?: FindOptionsOrder<ProductEntity>) {
+  async findByCate(cateId: number, shopId: number, page: number, perPage: number, order?) {
     const cate = await this.cateRepo.findOne(cateId);
     const cateIds = (await this.cateRepo.findDescendants(cate)).filter(i => i.level == 3).map(i => i.id);
-    const query: FindOptions<ProductEntity> = {
+    const query: FindManyOptions<ProductEntity> = {
       select: ['price', 'pname', 'cover'],
       take: perPage,
       skip: perPage * (page - 1),

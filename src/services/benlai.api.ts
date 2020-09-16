@@ -1,24 +1,25 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import moment from 'moment';
+import querystring from 'querystring';
 
 const http = axios.create({
   baseURL: 'http://openapitestb.benlai.com',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
 
-const clientId = '190361';
-const clientSecret = 'd40lplz85dywwmjxgrv9cnkhjb72fqt6';
+const clientId = 'B229933192251933';
+const clientSecret = '2d4de94a2b9749a596e4599cc2beaca7';
 
 let token: tokenObj = {
   token: '',
   refreshToken: '',
   createTime: '',
 };
-async function fetchToken() {
-  const { access_token, refresh_token } = await blApi.fetchToken({ clientId, clientSecret });
-  token = { token: access_token, refreshToken: refresh_token, createTime: moment().toString() };
-  return access_token;
-}
+
+// async function fetchToken() {
+//   const { access_token, refresh_token } = await benlaiApi.fetchToken({ clientId, clientSecret });
+//   token = { token: access_token, refreshToken: refresh_token, createTime: moment().toString() };
+//   return access_token;
+// }
 
 // async function getToken() {
 //   if (token.token != '' && moment(token.token).add(20, 'h').isAfter()) {
@@ -28,24 +29,25 @@ async function fetchToken() {
 // }
 
 const sfPost = async (url: string, data?: any, config?: AxiosRequestConfig): Promise<any> => {
-  const res = await http.post(url, data, config);
+  const res = await http.post(url, querystring.stringify(data), config);
   return res.data;
 };
 
 const sfGet = async (url: string, data?: any): Promise<any> => {
-  const resp = await http.get(url, { data });
+  const resp = await http.get(url, { data: querystring.stringify(data) });
   return resp.data.value;
 };
 
-export const blApi = {
-  async fetchToken({ clientId, clientSecret }) {
+export const benlaiApi = {
+  async fetchToken() {
     const token = Buffer.from(clientId + ':' + clientSecret).toString('base64');
-    const data = new FormData();
-    data.append('grant_type', 'client_credentials');
-    data.append('scope', 'yghwechat');
-    const res = await http.post('token', data, {
-      headers: { Authorization: 'Basic ' + token, 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await http.post(
+      'token',
+      { grant_type: 'client_credentials', scope: 'yghwechat' },
+      {
+        headers: { Authorization: 'Basic ' + token },
+      }
+    );
     return res.data.value;
   },
   async fetchCate(level: number = 0, parent_id?: string) {

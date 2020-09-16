@@ -6,7 +6,7 @@ import { CateEntity } from './entities/category/cate.product.entity';
 import { ShopEntity } from './entities/shop/shop.entity';
 import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
-import { blApi } from './services/bl.api'
+import { benlaiApi } from './services/benlai.api';
 
 @Injectable()
 export class AppService {
@@ -14,7 +14,7 @@ export class AppService {
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>,
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>
-  ) { }
+  ) {}
   // @Timeout(2000)
   async load() {
     const src = [
@@ -145,7 +145,7 @@ export class AppService {
       await this.cateRepo.save({ name: i.category_name, level: i.level, pid: '' + i.category_id, shopId: shop.id });
     }
     for (const i of src1) {
-      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + "" } });
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + '' } });
       if (!cateP) return;
       await this.cateRepo.save({
         name: i.category_name,
@@ -157,7 +157,7 @@ export class AppService {
     }
 
     for (const i of src2) {
-      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + "" } });
+      const cateP = await this.cateRepo.findOne({ where: { shopId: shop.id, pid: i.parent_id + '' } });
       if (!cateP) return;
       await this.cateRepo.save({
         name: i.category_name,
@@ -201,9 +201,13 @@ export class AppService {
       }
     }
   }
-  // @Timeout(200)
-  async test() {
-    const res = await blApi.fetchToken({ clientId: "B229933192251933", clientSecret: "2d4de94a2b9749a596e4599cc2beaca7" })
+
+  @Timeout(2000)
+  async loadBLCates() {
+    console.log('start');
+    const res = await benlaiApi.fetchToken();
+    console.log('+++++++++++++++++');
     console.log(res);
+    console.log('+++++++++++++++++');
   }
 }

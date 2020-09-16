@@ -1,9 +1,5 @@
-import { IsNumber, IsObject, } from 'class-validator';
-import { ProductEntity } from 'src/entities/product/prdouct.entity';
-import { FindOptionsOrder } from 'typeorm/find-options/FindOptions';
-
+import { IsNumber, IsObject } from 'class-validator';
 export class ProdCateQueryDto {
-
   cateId: number;
   @IsNumber()
   shopId: number;
@@ -13,6 +9,5 @@ export class ProdCateQueryDto {
   perPage: number;
 
   @IsObject()
-  order: FindOptionsOrder<ProductEntity>;
+  order: any;
 }
-

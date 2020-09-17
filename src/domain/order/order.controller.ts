@@ -8,8 +8,8 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  @Post('/shop/:shopId')
-  async create(@Param('shopId') shopId: number, @Body() orderCreateDto: OrderCreateDto, @User() user: UserEntity) {
-    await this.orderService.createOrder(orderCreateDto, user, shopId);
+  @Post('')
+  async create(@Body() orderCreateDto: OrderCreateDto, @User() user: UserEntity) {
+    await this.orderService.createOrder(orderCreateDto, user);
   }
 }

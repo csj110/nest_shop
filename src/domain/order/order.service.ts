@@ -6,65 +6,81 @@ import { OrderProductEntity } from 'src/entities/order/order.product.entity';
 import { OrderRecordEntity } from 'src/entities/order/order.record.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
 import { UserEntity } from 'src/entities/user.entity';
-import { Repository, Transaction } from 'typeorm';
+import { Repository } from 'typeorm';
 import { getShopFreigt } from './freight';
-import chance from 'chance';
+
+var Chance = require('chance');
+var chance = new Chance();
+import { ShopEntity } from 'src/entities/shop/shop.entity';
+
 const moment = require('moment');
+
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(OrderEntity) private orderRepo: Repository<OrderEntity>,
     @InjectRepository(OrderProductEntity) private orderProdRepo: Repository<OrderProductEntity>,
-    @InjectRepository(OrderRecordEntity) private orderRecordRepo: Repository<OrderRecordEntity>
+    @InjectRepository(OrderRecordEntity) private orderRecordRepo: Repository<OrderRecordEntity>,
+    @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>
   ) {}
 
-  @Transaction()
-  async createOrder(orderCreateDto: OrderCreateDto, user: UserEntity, shopId: number) {
-    const ids = orderCreateDto.prods.map(i => i.prodId);
-    const prods = await this.prodRepo.findByIds(ids);
-    //todo check the price,inventory,freight.
-    let price = 0;
-    for (const prod of prods) {
-      if (prod.shopId != shopId) throw new BadRequestException('商家数据异常');
-    }
-
-    let orderProds = [];
-
-    for (var i = 0; i < orderCreateDto.prods.length; i++) {
-      const quantity = orderCreateDto.prods[i].number;
-      price += prods[i].price * quantity;
-      const newOrderProd = {
-        ...prods[i],
-        name: prods[i].pname,
-        quantity: quantity,
-      };
-      orderProds.push(newOrderProd);
-    }
-    price /= 100;
+  async createOrder(orderCreateDto: OrderCreateDto, user: UserEntity) {
     const { province, city, county, area, receivername, receiverphone } = orderCreateDto;
-    const freight = getShopFreigt(shopId, price);
-    const newOrder = await this.orderRepo.create({
-      province,
-      city,
-      county,
-      area,
-      receivername,
-      receiverphone,
-      price,
-      freight,
-      oid: moment().format('YYYYMMDDHHmm') + chance.string({ length: 8, casing: 'lower', alpha: true, numeric: true }),
-    });
-    newOrder.user = user;
-    orderProds = await this.orderProdRepo.save(orderProds);
-    newOrder.products = orderProds;
-    const orderCreateRecord: OrderRecordEntity = await this.orderRecordRepo.save({ message: '订单创建' });
-    newOrder.records = [orderCreateRecord];
-    await newOrder.save();
-    return newOrder.id;
+    for (const shop of orderCreateDto.shops) {
+      const { shopId, freight, prods, price } = shop;
+      const shopprods = prods.split(';').map(i => {
+        let [prodIdStr, numberStr] = i.split(':');
+        return { prodId: parseInt(prodIdStr), number: parseInt(numberStr) };
+      });
+      const ids = shopprods.map(i => i.prodId);
+      const shopProds = await this.prodRepo.findByIds(ids, { where: { shopId: shopId } });
+      const tShop = await this.shopRepo.findOne(shopId, { cache: 1000 * 60 }); // * 目标商店
+      if (shopProds.length != ids.length) throw new BadRequestException('商品数据异常');
+      let myPrice = 0;
+      let orderProds = [];
+      for (var i = 0; i < shopprods.length; i++) {
+        const quantity = shopprods[i].number;
+        myPrice += shopProds[i].price * quantity;
+        const newOrderProd = {
+          ...shopProds[i],
+          name: shopProds[i].pname,
+          quantity,
+        };
+        orderProds.push(newOrderProd);
+      }
+      const myFreight = getShopFreigt(shopId, price);
+      console.log(myPrice, price, freight, myFreight);
+      if (myPrice != price || freight != myFreight) throw new BadRequestException('商品价格运费出现变动,请重新下单');
+      const newOrder = await this.orderRepo.create({
+        province,
+        city,
+        county,
+        area,
+        receivername,
+        receiverphone,
+        price,
+        freight,
+        oid:
+          tShop.code +
+          moment().format('YYYYMMDDHHmmss') +
+          chance.string({ length: 8, casing: 'upper', pool: '0123456789ABCDEF' }),
+        shopId: tShop.id,
+      });
+      newOrder.user = user;
+      orderProds = await this.orderProdRepo.save(orderProds);
+      newOrder.products = orderProds;
+      const orderCreateRecord: OrderRecordEntity = await this.orderRecordRepo.save({ message: '用户创建订单' });
+      newOrder.records = [orderCreateRecord];
+      await newOrder.save();
+      try {
+        //todo 向商户发出订单请求,修改订单状态,然后扣除积分,积分扣除失败的话需要,撤销向商户
+      } catch (error) {
+        //todo 失败的话,订单状态不改变
+      }
+    }
   }
 
-  @Transaction()
   async checkoutOrders(orderId: number, user: UserEntity) {
     const order = await this.orderRepo.findOne(orderId, { relations: ['user'] });
     if (order.user.id != user.id) throw new BadRequestException('非本人订单');

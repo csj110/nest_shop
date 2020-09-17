@@ -1,29 +1,41 @@
-const axios = require("axios");
-const querystring = require("querystring");
-const crypto = require("crypto");
-const md5 = crypto.createHash("md5");
-var FormData = require("formdata-node");
+const axios = require('axios');
+const querystring = require('querystring');
+
 const http = axios.create({
-  baseURL: "http://openapitestb.benlai.com",
-  headers: {
-    "Content-Type": "multipart/form-data",
-    "Authorization":
-			"Basic QjIyOTkzMzE5MjI1MTkzMzoyZDRkZTk0YTJiOTc0OWE1OTZlNDU5OWNjMmJlYWNhNw==",
-			"X-Real-IP":"119.28.59.171"
-  }
+	baseURL: 'http://openapitestb.benlai.com',
+	headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 });
 
-const data = new FormData();
+const clientId = 'B229933192251933';
+const clientSecret = '2d4de94a2b9749a596e4599cc2beaca7';
 
-data.set("grant_type", "client_credentials");
-data.set("scope", "yghwechat");
-console.log(data);
-http
-  .post("token", data)
-  .then(res => {
-    console.log(res);
-  })
-  .catch(err => console.log(err));
-setTimeout(() => {
-  console.log("object");
-}, 1000 * 5);
+let token = {
+	token: '',
+	refreshToken: '',
+	createTime: ''
+};
+
+const sfPost = async (url, data, config) => {
+	const res = await http.post(url, querystring.stringify(data), config);
+	return res.data;
+};
+
+const sfGet = async (url, data) => {
+	const resp = await http.get(url, { data: querystring.stringify(data) });
+	return resp.data.value;
+};
+const benlaiApi = {
+	async fetchToken() {
+		const token = Buffer.from(clientId + ':' + clientSecret).toString('base64');
+		const res = await http.post(
+			'token',
+			{ grant_type: 'client_credentials', scope: 'yghwechat' },
+			{
+				headers: { Authorization: 'Basic ' + token }
+			}
+		);
+		return res.data.value;
+	}
+};
+
+benlaiApi.fetchToken().then((res) => console.log(res)).catch((e) => console.log(e));

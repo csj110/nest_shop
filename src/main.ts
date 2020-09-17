@@ -8,14 +8,14 @@ import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api')
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true
-    }),
+      whitelist: true,
+    })
   );
-  app.useGlobalInterceptors(new ResInterceptor())
+  app.useGlobalInterceptors(new ResInterceptor());
 
   // const options = new DocumentBuilder()
   //   .setTitle('Cats example')
@@ -27,6 +27,5 @@ async function bootstrap() {
   // SwaggerModule.setup('doc', app, document);
 
   await app.listen(3000);
-  
 }
 bootstrap();

@@ -11,7 +11,7 @@ export class OrderProductEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   name: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 200 })
   cover: string;
 
   @Column({ type: 'tinyint', unsigned: true })

@@ -25,6 +25,7 @@ export class CartService {
   }
 
   async addToCart(prodId: number, user: UserEntity, number?: number): Promise<any> {
+    console.log(number);
     const prod = await this.prodRepo.findOne(prodId);
     if (!prod) throw new BadRequestException('no such a prod');
     let cartItem = await this.cartRepo.findOne({ where: { userId: user.id, shopId: prod.shopId, prodId: prodId } });
@@ -35,10 +36,13 @@ export class CartService {
         userId: user.id,
         number: number || 1,
       });
-    } else {
-      cartItem.number == number || cartItem.number + 1;
     }
-    await cartItem.save();
+    if (number != 0) {
+      cartItem.number = number || cartItem.number + 1;
+      cartItem.save();
+    } else {
+      cartItem.remove();
+    }
     return 'ok';
   }
 

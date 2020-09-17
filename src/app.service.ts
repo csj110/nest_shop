@@ -202,12 +202,16 @@ export class AppService {
     }
   }
 
-  @Timeout(2000)
+  // @Timeout(2000)
   async loadBLCates() {
     console.log('start');
-    const res = await benlaiApi.fetchToken();
+    try {
+      const res = await benlaiApi.fetchToken();
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
     console.log('+++++++++++++++++');
-    console.log(res);
     console.log('+++++++++++++++++');
   }
 }

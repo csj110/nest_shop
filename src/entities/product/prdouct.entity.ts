@@ -15,7 +15,7 @@ export class ProductEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   pname: string;
 
-  @Column({ type: 'varchar', length: 100, comment: '封面图片', default: '' })
+  @Column({ type: 'varchar', length: 200, comment: '封面图片', default: '' })
   cover: string;
 
   @Column({ type: 'int' })

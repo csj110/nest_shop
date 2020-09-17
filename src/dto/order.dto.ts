@@ -1,18 +1,11 @@
-import {
-  IsMobilePhone,
-  IsNotEmptyObject,
-  IsNumber,
-  IsString,
-  Max,
-  Min,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsMobilePhone, IsNumber, IsString, MinLength, ValidateNested } from 'class-validator';
 
 export class OrderCreateDto {
-  @ValidateNested()
-  @IsNotEmptyObject({ message: '商品不能为空 ' })
-  prods: OrderProdDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ShopOrderDto)
+  shops: ShopOrderDto[];
 
   @IsString()
   @MinLength(2)
@@ -32,11 +25,13 @@ export class OrderCreateDto {
   receiverphone: string;
 }
 
-class OrderProdDto {
+class ShopOrderDto {
   @IsNumber()
-  prodId: number;
+  shopId: number;
+  @IsString()
+  prods: string;
   @IsNumber()
-  @Min(1)
-  @Max(20, { message: '最多支持购买20件' })
-  number: number;
+  freight: number;
+  @IsNumber()
+  price: number;
 }

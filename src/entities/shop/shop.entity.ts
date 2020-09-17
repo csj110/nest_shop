@@ -12,4 +12,7 @@ export class ShopEntity extends BaseEntity {
 
   @Column({ type: 'varchar', length: 30, comment: '中文名字', nullable: true })
   cname: string;
+
+  @Column({ type: 'varchar', length: 5, comment: '标识符', nullable: true })
+  code: string;
 }

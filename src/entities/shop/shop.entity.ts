@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { CartItemEntity } from '../cart.entity';
 import { ProductEntity } from '../product/prdouct.entity';
 import { BannerEntity } from './banner.entity';
 
@@ -15,4 +16,6 @@ export class ShopEntity extends BaseEntity {
 
   @Column({ type: 'varchar', length: 5, comment: '标识符', nullable: true })
   code: string;
+
+  cart: CartItemEntity[]
 }

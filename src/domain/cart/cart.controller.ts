@@ -18,8 +18,8 @@ export class CartController {
     return this.cartService.clearMyCart(user, shopId);
   }
 
-  @Get('shop/:shopId')
+  @Get('')
   async getCartItems(@Param('shopId') shopId: number, @User() user: UserEntity) {
-    return await this.cartService.getItems(shopId, user)
+    return await this.cartService.getItems(user)
   }
 }

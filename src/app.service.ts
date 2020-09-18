@@ -7,6 +7,7 @@ import { ShopEntity } from './entities/shop/shop.entity';
 import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
 import { benlaiApi } from './services/benlai.api';
+import { zlApi } from './services/zl.api';
 
 @Injectable()
 export class AppService {
@@ -202,11 +203,11 @@ export class AppService {
     }
   }
 
-  // @Timeout(2000)
+  @Timeout(2000)
   async loadBLCates() {
     console.log('start');
     try {
-      const res = await benlaiApi.fetchToken();
+      const res = await zlApi.fetchPPool();
       console.log(res);
     } catch (error) {
       console.log(error);

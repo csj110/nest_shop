@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { raw } from 'express';
 
 import { CartItemEntity } from 'src/entities/cart.entity';
 import { CateEntity } from 'src/entities/category/cate.product.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
 import { ShopEntity } from 'src/entities/shop/shop.entity';
 import { UserEntity } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class CartService {
@@ -14,23 +15,24 @@ export class CartService {
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>
-  ) { }
+  ) {}
 
   async getItems(user: UserEntity) {
+    const rawList = await this.cartRepo
+      .createQueryBuilder('i')
+      .innerJoin(ShopEntity, 'shop', 'shop.id = i.shopId')
+      .innerJoin(ProductEntity, 'p', 'p.id = i.prodId')
+      .select(['shop.name', 'shop.id'])
+      .addSelect(['p.cover', 'p.price', 'p.inventory', 'p.pname'])
+      .addSelect(['i.number'])
+      .where('i.userId = :userId', { userId: user.id })
+      .getRawMany();
 
-    return await this.shopRepo.createQueryBuilder('shop')
-      .innerJoinAndMapMany('shop.cart',
-        CartItemEntity,
-        'item', 'item.shopId = shop.id')
-      .getMany()
-    // return await this.cartRepo
-    //   .createQueryBuilder('i')
-    //   .innerJoinAndSelect('i.prod', 'p')
-    //   .select('i.number', 'number')
-    //   .addSelect(['p.pname', 'p.cover', 'p.price', 'p.inventory'])
-    //   .addSelect(["shop.name", 'shop.id'])
-    //   .where('i.userId = :userId', { userId: user.id })
-    //   .getRawMany();
+    // const shopMap={}
+    // rawList.forEach(i=>{
+    //   if shopMap[i.]
+    // })
+    return rawList;
   }
 
   async addToCart(prodId: number, user: UserEntity, number?: number): Promise<any> {
@@ -45,12 +47,15 @@ export class CartService {
         userId: user.id,
         number: number || 1,
       });
-    }
-    if (number != 0) {
-      cartItem.number = number || cartItem.number + 1;
-      cartItem.save();
+      await cartItem.save();
     } else {
-      cartItem.remove();
+      console.log(cartItem);
+      if (number != 0) {
+        cartItem.number = number || cartItem.number + 1;
+        await cartItem.save();
+      } else {
+        await cartItem.remove();
+      }
     }
     return 'ok';
   }

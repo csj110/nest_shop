@@ -17,5 +17,11 @@ export class ShopEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 5, comment: '标识符', nullable: true })
   code: string;
 
-  cart: CartItemEntity[]
+  cart: CartitemVo[];
+}
+
+class CartitemVo {
+  number: string;
+  shopId: string;
+  pname: string;
 }

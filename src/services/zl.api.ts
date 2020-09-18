@@ -1,6 +1,6 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import querystring from 'querystring';
-import crypto from 'crypto';
+import axios from 'axios';
+const querystring = require('querystring');
+const crypto = require('crypto');
 
 const md5 = crypto.createHash('md5');
 
@@ -14,16 +14,18 @@ const appsecret = 'd40lplz85dywwmjxgrv9cnkhjb72fqt6';
 
 const zlPost = async (method: string, param: any = ''): Promise<any> => {
   param = JSON.stringify(param);
+  console.log(param);
   const eSrc = method + appkey + appsecret + param;
   const sign = md5.copy().update(eSrc).digest('hex').toUpperCase();
+  console.log(sign);
   const data = querystring.stringify({ method, appkey, param: encodeURIComponent(param), sign });
   const res = await http.post('', data);
   return res.data;
 };
 
-const zlApi = {
+export const zlApi = {
   fetchPPool() {
-    return zlPost('womai.itempagenum.get');
+    return zlPost('womai.itempagenum.get', {});
   },
   fetchPList(p: FetchPListParam) {
     return zlPost('womai.itemlist.get', p);

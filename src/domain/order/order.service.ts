@@ -12,6 +12,11 @@ import { getShopFreigt } from './freight';
 var Chance = require('chance');
 var chance = new Chance();
 import { ShopEntity } from 'src/entities/shop/shop.entity';
+import { MyOrderProdOrigin } from 'src/interface/interface';
+import { POrder, PostPOrderParam } from 'src/services/zl.api';
+
+import { zlApi } from '../../services/zl.api';
+
 
 const moment = require('moment');
 
@@ -23,7 +28,7 @@ export class OrderService {
     @InjectRepository(OrderProductEntity) private orderProdRepo: Repository<OrderProductEntity>,
     @InjectRepository(OrderRecordEntity) private orderRecordRepo: Repository<OrderRecordEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>
-  ) {}
+  ) { }
 
   async createOrder(orderCreateDto: OrderCreateDto, user: UserEntity) {
     const { province, city, county, area, receivername, receiverphone } = orderCreateDto;
@@ -52,7 +57,9 @@ export class OrderService {
       const myFreight = getShopFreigt(shopId, price);
       console.log(myPrice, price, freight, myFreight);
       if (myPrice != price || freight != myFreight) throw new BadRequestException('商品价格运费出现变动,请重新下单');
-      const newOrder = await this.orderRepo.create({
+      const createdTime = moment().format('YYYYMMDDHHmmss')
+      console.log(createdTime);
+      const newOrder: OrderEntity = await this.orderRepo.create({
         province,
         city,
         county,
@@ -63,20 +70,26 @@ export class OrderService {
         freight,
         oid:
           tShop.code +
-          moment().format('YYYYMMDDHHmmss') +
+          createdTime +
           chance.string({ length: 8, casing: 'upper', pool: '0123456789ABCDEF' }),
         shopId: tShop.id,
       });
       newOrder.user = user;
-      orderProds = await this.orderProdRepo.save(orderProds);
-      newOrder.products = orderProds;
-      const orderCreateRecord: OrderRecordEntity = await this.orderRecordRepo.save({ message: '用户创建订单' });
-      newOrder.records = [orderCreateRecord];
-      await newOrder.save();
       try {
         //todo 向商户发出订单请求,修改订单状态,然后扣除积分,积分扣除失败的话需要,撤销向商户
+
+        // * 先使用BL测试
+        //todo 根据商城不同 确定不同api 
+        const res = await this.createZLOrder(orderProds, newOrder, createdTime)
+        console.log(res);
+        // orderProds = await this.orderProdRepo.save(orderProds);
+        // newOrder.products = orderProds;
+        // const orderCreateRecord: OrderRecordEntity = await this.orderRecordRepo.save({ message: '用户创建订单' });
+        // newOrder.records = [orderCreateRecord];
+        // await newOrder.save();
       } catch (error) {
         //todo 失败的话,订单状态不改变
+        console.log(error);
       }
     }
   }
@@ -91,4 +104,39 @@ export class OrderService {
     await orderRecord.save();
     await order.save();
   }
+
+
+  async createZLOrder(orderProds: MyOrderProdOrigin[], order: OrderEntity, time: string) {
+    const orders: POrder[] = orderProds.map((i, index) => ({
+      tid: order.oid,
+      oid:order.oid+index,
+      num: i.quantity,
+      outer_iid: i.pid,
+      price: i.price / 100,
+      title: i.pname,
+      total_fee: i.price * i.quantity / 100
+    }))
+
+    const orderRequest: PostPOrderParam = {
+      tid: order.oid,
+      created: moment(time).format("YYYY-MM-DD HH:mm:ss"),
+      adjust_fee: 0,
+      buyer_nick: order.receivername,
+      payment: order.price / 100,
+      discount_fee: 0,
+      total_fee: order.freight + order.price,
+      post_fee: order.freight,
+      receiver_name: order.receivername,
+      receiver_state: order.province,
+      receiver_city: order.city,
+      receiver_district: order.county,
+      receiver_address: order.area,
+      receiver_mobile: order.receiverphone,
+      orders
+    }
+    console.log(orderRequest);
+    return await zlApi.postPOrder(orderRequest)
+  }
 }
+
+

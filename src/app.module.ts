@@ -14,6 +14,8 @@ import { ShopEntity } from './entities/shop/shop.entity';
 import { ProductEntity } from './entities/product/prdouct.entity';
 import { CartModule } from './domain/cart/cart.module';
 import { OrderModule } from './domain/order/order.module';
+import { SwiperEntity } from './entities/product/swiper.prod.entity';
+import { DetailImageEntity } from './entities/product/image.detail.entity';
 
 @Module({
   imports: [
@@ -25,11 +27,11 @@ import { OrderModule } from './domain/order/order.module';
     ProdCateModule,
     ProdModule,
     AddrModule,
-    TypeOrmModule.forFeature([CateEntity, ShopEntity, ProductEntity]),
+    TypeOrmModule.forFeature([CateEntity, ShopEntity, ProductEntity, SwiperEntity, DetailImageEntity]),
     CartModule,
     OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

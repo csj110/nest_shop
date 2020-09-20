@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { raw } from 'express';
+import { retry } from 'rxjs/operators';
 
 import { CartItemEntity } from 'src/entities/cart.entity';
 import { CateEntity } from 'src/entities/category/cate.product.entity';
 import { ProductEntity } from 'src/entities/product/prdouct.entity';
 import { ShopEntity } from 'src/entities/shop/shop.entity';
 import { UserEntity } from 'src/entities/user.entity';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { ShopCartVo } from 'src/vo/cart.vo';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CartService {
@@ -15,7 +17,7 @@ export class CartService {
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>
-  ) {}
+  ) { }
 
   async getItems(user: UserEntity) {
     const rawList = await this.cartRepo
@@ -27,12 +29,7 @@ export class CartService {
       .addSelect(['i.number'])
       .where('i.userId = :userId', { userId: user.id })
       .getRawMany();
-
-    // const shopMap={}
-    // rawList.forEach(i=>{
-    //   if shopMap[i.]
-    // })
-    return rawList;
+    return this.mapRawCartitemsToShopCart(rawList);
   }
 
   async addToCart(prodId: number, user: UserEntity, number?: number): Promise<any> {
@@ -63,5 +60,26 @@ export class CartService {
   clearMyCart(user: UserEntity, shopId: number) {
     this.cartRepo.delete({ userId: user.id, shopId });
     return 'ok';
+  }
+
+  mapRawCartitemsToShopCart(src: any[]): ShopCartVo[] {
+    const shopMap = {}
+    const res = []
+    src.forEach(i => {
+      let shop = shopMap[i.shop_name]
+      if (shop == undefined) {
+        shop = {}
+        shop.cart = []
+        shop.name = i.shop_name
+        shop.id = i.shop_id
+      }
+      shop.cart.push({ pname: i.p_pname, cover: i.P_cover, price: i.p_price, inventory: i.p_inventory, number: i.i_number })
+      shopMap[i.shop_name] = shop
+    })
+
+    for (const key in shopMap) {
+      res.push(shopMap[key])
+    }
+    return res
   }
 }

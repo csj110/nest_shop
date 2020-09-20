@@ -8,14 +8,19 @@ import { a } from '../a';
 import { ProductEntity } from './entities/product/prdouct.entity';
 import { benlaiApi } from './services/benlai.api';
 import { zlApi } from './services/zl.api';
+import { stat } from 'fs';
+import { SwiperEntity } from './entities/product/swiper.prod.entity';
+import { DetailImageEntity } from './entities/product/image.detail.entity';
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>,
-    @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>
-  ) {}
+    @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
+    @InjectRepository(SwiperEntity) private swiperRepo: Repository<SwiperEntity>,
+    @InjectRepository(DetailImageEntity) private detailImageRepo: Repository<DetailImageEntity>,
+  ) { }
   // @Timeout(2000)
   async load() {
     const src = [
@@ -181,6 +186,7 @@ export class AppService {
 
   // @Timeout(10000)
   async loadProd() {
+
     const cates = await this.cateRepo.find({ where: { level: 3 } });
     for (let i = 0; i < a.length; i++) {
       try {
@@ -203,16 +209,50 @@ export class AppService {
     }
   }
 
-  @Timeout(2000)
-  async loadBLCates() {
-    console.log('start');
+  // @Timeout(2000)
+  async loadBLProd() {
+    let shop = await this.shopRepo.findOne({ name: 'Zhongliangwomai' });
+    if (!shop) shop = await this.shopRepo.save({ name: 'Zhongliangwomai', cname: "中粮我买", code: "ZL" });
     try {
-      const res = await zlApi.fetchPPool();
-      console.log(res);
+      const pools = await zlApi.fetchPPool();
+      console.log(pools);
+      for (const pool of pools) {
+        const prods = await zlApi.fetchPList({ pagenum: pool.page_num })
+        console.log(prods);
+        for (const prod of prods) {
+          try {
+            const skuid: string = prod.itemid
+            const [{ pid, pname, detailImages }, state, images, inventory, price] = await Promise.all([
+              zlApi.fetchPDetail({ skuid }),
+              zlApi.fetchPState({ skuid }),
+              zlApi.fetchPImages({ skuid }),
+              zlApi.fetchPInventory({ skuids: skuid, warehouseid: '100' }),
+              zlApi.fetchPPrice({ skuids: skuid }),
+            ])
+            let myProd = await this.prodRepo.findOne({ pid, shopId: shop.id })
+            if (!myProd) {
+              myProd = await this.prodRepo.save({ pid, pname, cover: images[0] ? images[0].path : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1575378762,3649761949&fm=26&gp=0.jpg', price: price * 100, deprcated: !state, inventory, shopId: shop.id })
+              for (const img of images) {
+                await this.swiperRepo.save({ url: img.path, sort: parseInt(img.isprimary || 1), prodId: myProd.id })
+              }
+              for (let i = 0; i < detailImages.length; i++) {
+                const img = detailImages[i];
+                await this.detailImageRepo.save({ url: img, sort: i, prodId: myProd.id })
+              }
+            }
+            else {
+              const newProd = this.prodRepo.merge(myProd, { pid, pname, cover: images[0] ? images[0].path : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1575378762,3649761949&fm=26&gp=0.jpg', price: price * 100, deprcated: !state, inventory, shopId: shop.id })
+              if (newProd != myProd) {
+                await newProd.save()
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
     } catch (error) {
       console.log(error);
     }
-    console.log('+++++++++++++++++');
-    console.log('+++++++++++++++++');
   }
 }

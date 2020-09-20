@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import 'dotenv/config';
 import { ResInterceptor } from './interceptor/res.interceptor';
-import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
-import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

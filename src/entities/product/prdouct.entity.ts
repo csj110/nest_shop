@@ -43,9 +43,9 @@ export class ProductEntity extends BaseEntity {
   @Column({ nullable: true })
   shopId: number;
 
-  @Column({ type: "tinyint", nullable: true, default: 3, comment: "商品排序等级1 最高" })
-  level: number
+  @Column({ type: 'tinyint', unsigned: true, nullable: true, default: 3, comment: '商品排序等级1 最高' })
+  level: number;
 
-  @Column({ type: "tinyint", nullable: true, default: 1, comment: "商品排序标准2 等级1 最高" })
-  sort: number
+  @Column({ type: 'tinyint', unsigned: true, nullable: true, default: 1, comment: '商品排序标准2 等级1 最高' })
+  sort: number;
 }

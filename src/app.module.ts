@@ -16,6 +16,7 @@ import { CartModule } from './domain/cart/cart.module';
 import { OrderModule } from './domain/order/order.module';
 import { SwiperEntity } from './entities/product/swiper.prod.entity';
 import { DetailImageEntity } from './entities/product/image.detail.entity';
+import { ShopModule } from './domain/shop/shop.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DetailImageEntity } from './entities/product/image.detail.entity';
     TypeOrmModule.forFeature([CateEntity, ShopEntity, ProductEntity, SwiperEntity, DetailImageEntity]),
     CartModule,
     OrderModule,
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [AppService],

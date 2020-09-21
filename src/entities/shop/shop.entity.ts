@@ -17,6 +17,12 @@ export class ShopEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 5, comment: '标识符', nullable: true })
   code: string;
 
+  @Column({ type: 'tinyint', default: 100, comment: '排序作用' })
+  sort: number;
+
+  @Column({ type: 'tinyint', default: 2, comment: '一级排序' })
+  level: number;
+
   cart: CartitemVo[];
 }
 

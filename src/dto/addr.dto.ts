@@ -30,4 +30,8 @@ export class AddrDto {
   @IsString()
   @Length(11, 11, { message: '长度应等于11' })
   receiverphone: string;
+
+  @IsString()
+  @Length(0, 6, { message: '长度最大为6' })
+  areaCode: string;
 }

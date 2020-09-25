@@ -8,11 +8,28 @@ export class AddrPostEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
+  @Column({ type: 'varchar', length: 8 })
+  province: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  city: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  county: string;
+
+  @Column({ type: 'varchar', length: 40 })
+  area: string;
+  @Column({ name: 'receiver_name', type: 'varchar', length: '15' })
+  receivername: string;
+
+  @Column({ name: 'receiver_phone', type: 'varchar', length: '20' })
+  receiverphone: string;
+
   @Column({ default: false })
   default: boolean;
 
-  @Column(type => BasePostAddr)
-  addr: BasePostAddr;
+  @Column({ name: 'areaCode', type: 'varchar', length: 6, default: false })
+  areaCode: string;
 
   @Exclude()
   @ManyToOne(type => UserEntity, u => u.address)
@@ -20,7 +37,7 @@ export class AddrPostEntity extends BaseEntity {
 
   @Expose({ name: 'address' })
   address() {
-    return this.addr.province + this.addr.city + this.addr.county + this.addr.area;
+    return this.province + this.city + this.county + this.area;
   }
 
   toJson() {

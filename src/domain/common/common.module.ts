@@ -10,18 +10,18 @@ import { UserEntity } from 'src/entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 
-const options = {
-  port: 6379,
-  host: '127.0.0.1',
-  password: '',
-  db: 0,
-  keyPrefix: 'nest:',
-};
+// const options = {
+//   port: 6379,
+//   host: '127.0.0.1',
+//   password: '',
+//   db: 0,
+//   keyPrefix: 'nest:',
+// };
 
 @Global()
 @Module({
   imports: [
-    RedisModule.register(options),
+    // RedisModule.register(options),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       useFactory: () => ({
@@ -31,7 +31,8 @@ const options = {
     }),
     UserModule,
   ],
-  providers: [Redis, JwtStrategy],
+  providers: [
+    Redis, JwtStrategy],
   exports: [Redis, PassportModule, JwtStrategy, JwtModule],
 })
 export class CommonModule {}

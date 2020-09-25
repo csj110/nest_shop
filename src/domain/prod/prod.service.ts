@@ -12,7 +12,7 @@ export class ProdService {
     @InjectRepository(ProductEntity) private prodRepo: Repository<ProductEntity>,
     @InjectRepository(CateEntity) private cateRepo: TreeRepository<CateEntity>,
     @InjectRepository(CartItemEntity) private cartRepo: Repository<CartItemEntity>
-  ) { }
+  ) {}
 
   async findOne(id: number) {
     return await this.prodRepo.findOne(id, { relations: ['detailImages', 'swipers'] });
@@ -20,7 +20,7 @@ export class ProdService {
 
   async findAll(shopId: number, page: number, perPage: number, order?) {
     const query: FindManyOptions<ProductEntity> = {
-      select: ['price', 'pname', 'cover'],
+      select: ['price', 'pname', 'cover', 'shopId'],
       take: perPage,
       skip: perPage * (page - 1),
       order,
@@ -29,15 +29,14 @@ export class ProdService {
     await this.prodRepo.find(query);
   }
 
-
   async findAllByShop(shopId: number, page: number, perPage: number, order: Order, sort: ProdSort) {
     const query: FindManyOptions<ProductEntity> = {
-      select: ['price', 'pname', 'cover', 'id'],
+      select: ['price', 'pname', 'cover', 'id', 'shopId'],
       take: perPage,
       skip: perPage * (page - 1),
       order: order && sort ? { [sort]: order } : { level: 1, sort: 1 },
       where: { shopId },
-    }
+    };
     return await this.prodRepo.find(query);
   }
 

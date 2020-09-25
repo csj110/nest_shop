@@ -7,7 +7,7 @@ import { AddrDto } from 'src/dto/addr.dto';
 
 @Injectable()
 export class AddrService {
-  constructor(@InjectRepository(AddrPostEntity) private addrRepo: Repository<AddrPostEntity>) { }
+  constructor(@InjectRepository(AddrPostEntity) private addrRepo: Repository<AddrPostEntity>) {}
 
   async mustFindOne(
     id?: string | number | Date | ObjectID,
@@ -18,8 +18,9 @@ export class AddrService {
     return addr;
   }
 
-  async findAll(user: UserEntity): Promise<AddrPostEntity[]> {
-    return this.addrRepo.find({ where: { user } });
+  async findAll(user: UserEntity): Promise<any[]> {
+    const res = await this.addrRepo.find({ where: { user } });
+    return res.map(i => i.toJson());
   }
 
   async addAddr(addr: AddrDto, user: UserEntity): Promise<any> {
@@ -36,16 +37,16 @@ export class AddrService {
     return addrNew.toJson();
   }
 
-  async modifyAddr(addrId: number, addr: Partial<AddrDto>, user: UserEntity): Promise<Partial<AddrPostEntity>> {
+  async modifyAddr(addrId: number, addr: Partial<AddrDto>, user: UserEntity): Promise<any> {
     let oldAddr = await this.mustFindOne(addrId, { where: { user } });
     //TODO need to be tested
     await this.addrRepo.update(oldAddr, addr);
-    return oldAddr.toJson();
+    return 'ok';
   }
 
   async deleteAddr(addrId: number, user: UserEntity) {
     let addr = await this.mustFindOne(addrId, { where: { user } });
     // TODO need to be tested
-    await addr.remove()
+    await addr.remove();
   }
 }

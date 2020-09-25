@@ -7,7 +7,6 @@ import { AddrDto } from 'src/dto/addr.dto';
 import { AddrPostEntity } from 'src/entities/addr/address.entity';
 
 @Controller('addr')
-@UseGuards(AuthGuard())
 export class AddrController {
   constructor(private addrService: AddrService) {}
 
@@ -18,15 +17,12 @@ export class AddrController {
 
   @Post()
   async addAddr(@User() user: UserEntity, @Body() addr: AddrDto) {
+    console.log(addr);
     return await this.addrService.addAddr(addr, user);
   }
 
   @Patch(':id')
-  async editAddr(
-    @Param('id') id: number,
-    @Body() addr: Partial<AddrDto>,
-    @User() user: UserEntity
-  ): Promise<Partial<AddrPostEntity>> {
+  async editAddr(@Param('id') id: number, @Body() addr: AddrDto, @User() user: UserEntity) {
     return await this.addrService.modifyAddr(id, addr, user);
   }
 

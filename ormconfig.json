@@ -5,7 +5,9 @@
   "username": "root",
   "password": "sqlsecret",
   "database": "nest_shop",
-  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "entities": [
+    "dist/**/*.entity{.ts,.js}"
+  ],
   "logging": true,
   "autoLoadModels": true,
   "synchronize": false

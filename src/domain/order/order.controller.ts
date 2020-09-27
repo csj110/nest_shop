@@ -33,11 +33,18 @@ export class OrderController {
 
   @Get('')
   async getOrders(
-    @Query('page', pipInt) page: number,
-    @Query('perPage', pipInt) perPage: number,
+    @Query('pageNo', pipInt) page: number,
+    @Query('pageSize', pipInt) perPage: number,
+    @Query('state') state: any,
     @User() user: UserEntity
   ) {
-    return await this.orderService.getOrders(page, perPage, user);
+    if (state) state = parseInt(state);
+    return await this.orderService.getOrders(page, perPage, state, user);
+  }
+
+  @Get(':orderId')
+  async getOrder(@Param('orderId') orderId: number, @User() user: UserEntity) {
+    return await this.orderService.getOrder(orderId, user);
   }
 
   @Delete('/:orderId')

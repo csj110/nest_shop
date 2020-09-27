@@ -30,24 +30,31 @@ export class OrderService {
     @InjectRepository(ShopEntity) private shopRepo: Repository<ShopEntity>
   ) {}
 
-  async getOrders(page: number, perPage: number, user: UserEntity) {
+  async getOrders(page: number, perPage: number, state: number, user: UserEntity) {
     return await this.orderRepo.find({
-      select: [
-        'province',
-        'city',
-        'county',
-        'area',
-        'receivername',
-        'receiverphone',
-        'state',
-        'oid',
-        'price',
-        'freight',
-      ],
-      where: { user },
+      // select: [
+      //   'province',
+      //   'city',
+      //   'county',
+      //   'area',
+      //   'receivername',
+      //   'receiverphone',
+      //   'state',
+      //   'oid',
+      //   'price',
+      //   'freight',
+      //   'products',
+      // ],
+      relations: ['products'],
+      where: state ? { user, state } : { user },
       take: perPage,
       skip: (page - 1) * perPage,
     });
+  }
+
+  async getOrder(orderId: number, user: UserEntity) {
+    const order = await this.orderRepo.findOne(orderId, { where: { user }, relations: ['products'] });
+    return order.toJson();
   }
 
   async createOrder(orderCreateDto: OrderCreateDto, user: UserEntity) {

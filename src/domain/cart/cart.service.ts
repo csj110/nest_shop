@@ -24,7 +24,7 @@ export class CartService {
       .innerJoin(ProductEntity, 'p', 'p.id = i.prodId')
       .select(['shop.name', 'shop.id'])
       .addSelect(['p.cover', 'p.price', 'p.inventory', 'p.pname', 'p.id'])
-      .addSelect(['i.number','i.id'])
+      .addSelect(['i.number', 'i.id'])
       .where('i.userId = :userId', { userId: user.id })
       .getRawMany();
     return this.mapRawCartitemsToShopCart(rawList);
@@ -72,6 +72,9 @@ export class CartService {
         shop.name = i.shop_name;
         shop.id = i.shop_id;
         shop.selected = false;
+        shop.freight = 800;
+        shop.fPrice = 9500;
+        shop.discount = '99:5;150:20';
       }
       shop.cart.push({
         id: i.i_id,

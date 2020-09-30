@@ -13,7 +13,8 @@ export class OrderController {
 
   @Post('')
   async create(@Body() orderCreateDto: OrderCreateDto, @User() user: UserEntity) {
-    await this.orderService.createOrder(orderCreateDto, user);
+    console.log(orderCreateDto);
+    // await this.orderService.createOrder(orderCreateDto, user);
   }
 
   @Put('/pay/:orderId')

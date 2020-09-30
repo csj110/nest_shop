@@ -24,7 +24,7 @@ export class ProdService {
       take: perPage,
       skip: perPage * (page - 1),
       order,
-      where: { shopId },
+      where: { shopId, deprcated: false },
     };
     await this.prodRepo.find(query);
   }

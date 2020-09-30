@@ -7,7 +7,7 @@ export class CateEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
   name: string;
 
   @Column({ type: 'tinyint', unsigned: true, default: 1 }) // 1. 1级 2.2级  3.3级

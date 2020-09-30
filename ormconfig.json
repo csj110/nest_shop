@@ -4,11 +4,11 @@
   "port": 3306,
   "username": "root",
   "password": "sqlsecret",
-  "database": "nest_shop",
+  "database": "nest_shop_seq",
   "entities": [
     "dist/**/*.entity{.ts,.js}"
   ],
-  "logging": true,
+  "logging": false,
   "autoLoadModels": true,
   "synchronize": false
 }

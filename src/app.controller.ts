@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   async getHello() {
-    return await this.appService.findAll();
+    return Buffer.from('faffffffffffffffffffffffff');
   }
 }

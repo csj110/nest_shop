@@ -7,13 +7,13 @@ export class SwiperEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 255 })
   url: string;
 
   @Column({ type: 'tinyint' })
   sort: number;
 
-  @Column({ type: 'mediumint', unsigned: true,nullable: true })
+  @Column({ type: 'mediumint', unsigned: true, nullable: true })
   prodId: number;
 
   @ManyToOne(type => ProductEntity, p => p.swipers)

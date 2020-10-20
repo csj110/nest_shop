@@ -13,8 +13,7 @@ export class OrderController {
 
   @Post('')
   async create(@Body() orderCreateDto: OrderCreateDto, @User() user: UserEntity) {
-    console.log(orderCreateDto);
-    // await this.orderService.createOrder(orderCreateDto, user);
+    return await this.orderService.createOrder(orderCreateDto, user);
   }
 
   @Put('/pay/:orderId')
@@ -39,7 +38,7 @@ export class OrderController {
     @Query('state') state: any,
     @User() user: UserEntity
   ) {
-    if (state) state = parseInt(state);
+    state = state?.split(',');
     return await this.orderService.getOrders(page, perPage, state, user);
   }
 

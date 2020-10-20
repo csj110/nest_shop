@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsMobilePhone, IsNumber, IsString, MinLength, ValidateNested } from 'class-validator';
+import { IsArray, IsMobilePhone, IsNumber, IsString, MaxLength, MinLength, ValidateNested } from 'class-validator';
 
 export class OrderCreateDto {
   @IsArray()
@@ -23,6 +23,9 @@ export class OrderCreateDto {
   receivername: string;
   @IsMobilePhone('zh-CN', {}, { message: '请输入11位手机号码' })
   receiverphone: string;
+
+  @IsString()
+  payMethod: string;
 }
 
 class ShopOrderDto {
@@ -33,5 +36,12 @@ class ShopOrderDto {
   @IsNumber()
   freight: number;
   @IsNumber()
-  price: number;
+  tPrice: number;
+  @IsNumber()
+  discount: number;
+  @IsNumber()
+  fPrice: number;
+  @IsString()
+  @MaxLength(100, { message: '留言超出字数限制' })
+  message: string;
 }

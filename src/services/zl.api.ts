@@ -1,6 +1,8 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import axios from 'axios';
-import { read } from 'fs';
+import { CreateOrderDto } from 'src/domain/order/order.api';
+const moment = require('moment');
+
 const querystring = require('querystring');
 const crypto = require('crypto');
 
@@ -65,16 +67,46 @@ export const zlApi = {
       return res.itemcategory;
     });
   },
-  postPOrder(p: PostPOrderParam) {
+  postPOrder(p: CreateOrderDto) {
+    let { prods, oid, ctime, receivername, receiverphone, province, city, county, area, fPrice, freight } = p;
+    const orders = prods.map((i, index) => ({
+      tid: oid,
+      oid: oid + index,
+      num: i.quantity,
+      outer_iid: i.pid,
+      price: i.price / 100,
+      title: i.pname,
+      total_fee: (i.price * i.quantity) / 100,
+    }));
+    ctime = ctime.slice(0, 8) + 'T' + ctime.slice(8);
+    const trade: PostPOrderParam = {
+      tid: oid,
+      created: moment(ctime).format('YYYY-MM-DD HH:mm:ss'),
+      adjust_fee: 0,
+      trade_type: 'presale',
+      buyer_nick: receivername,
+      payment: fPrice / 100,
+      discount_fee: 0 / 100,
+      total_fee: (freight + fPrice) / 100,
+      post_fee: freight / 100,
+      receiver_name: receivername,
+      receiver_state: province,
+      receiver_city: city,
+      receiver_district: county,
+      receiver_address: city + county + area,
+      receiver_mobile: receiverphone,
+      orders: { order: orders },
+    };
     const param = {
-      trade: { trade_add_request: { trade: p } },
+      trade: { trade_add_request: { trade } },
     };
     return zlPost('womai.trade.add', param).then(res => {
-      if (res.result != 'true') throw new InternalServerErrorException('上架返回数据异常');
+      if (res.result != 'true') throw new InternalServerErrorException('商家返回数据异常');
       return res;
     });
   },
   postPOrderConfirm(p: POrderConfirmParam) {
+    console.log(p);
     return zlPost('womai.trade.confirm', p).then(res => {
       if (res.result != 'true') throw new InternalServerErrorException('商户订单确认失败');
       return res;

@@ -13,6 +13,9 @@ export class UserEntity extends AbstractEntity {
   @Column({ nullable: false })
   phone: string;
 
+  @Column({ type: 'varchar', length: 20, default: '' })
+  memberId: string;
+
   @OneToMany(type => OrderEntity, order => order.user)
   orders: OrderEntity[];
 

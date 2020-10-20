@@ -12,6 +12,8 @@ export enum OrderState {
   DELIVERIED = 3,
   FINISHED = 4,
   CANCELED = -1,
+  OUTDATE = -2,
+  DECREASE_WRONG = -3,
 }
 
 @Entity('orders')
@@ -37,18 +39,26 @@ export class OrderEntity extends AbstractEntity {
     type: 'enum',
     enum: OrderState,
     default: OrderState.CREATED,
-    comment: '//1.创建,2.已支付,3.以发货,4.已完成,-1.已取消',
+    comment: '//1.创建,2.已支付,3.待发货,4.已完成,-1.已取消,-2.已失效,-3.积分扣减出错',
   })
   state: number;
-
-  @Column({ type: 'int', unsigned: true })
-  price: number;
 
   @Column({ type: 'smallint', unsigned: true })
   freight: number;
 
+  @Column({ type: 'smallint', unsigned: true })
+  discount: number;
+
+  @Column({ type: 'int', unsigned: true })
+  tPrice: number;
+
+  @Column({ type: 'int', unsigned: true })
+  fPrice: number;
+
   @Column({ type: 'varchar', length: 50 })
   oid: string;
+  @Column({ name: 'trade_id', type: 'varchar', length: 30, comment: '商城的订单id' })
+  tradeId: string;
 
   @Expose({ name: 'address' })
   get address() {
@@ -66,6 +76,15 @@ export class OrderEntity extends AbstractEntity {
 
   @Column({ type: 'tinyint', unsigned: true, nullable: true })
   shopId: number;
+
+  @Column({ type: 'datetime', nullable: true })
+  payTime: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  outDateTime: Date;
+
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  payMethod: string;
 
   toJson() {
     return classToPlain(this);

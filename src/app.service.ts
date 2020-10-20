@@ -209,7 +209,7 @@ export class AppService {
   }
 
   // @Timeout(2000)
-  async loadBLProd() {
+  async loadZLProd() {
     let shop = await this.shopRepo.findOne({ name: 'Zhongliangwomai' });
     if (!shop) shop = await this.shopRepo.save({ name: 'Zhongliangwomai', cname: '中粮我买', code: 'ZL' });
     try {
@@ -272,9 +272,11 @@ export class AppService {
     } catch (error) {
       console.log(error);
     }
+    console.log('ZL 商品数据获取完成');
   }
   // @Timeout(2000)
-  async loadZlProd() {
+  async loadBLProd() {
+    //! 通过商品然后加载cate(cate比较多),去除不必要的cate
     let shop = await this.shopRepo.findOne({ name: 'Benlaishenghuo' });
     if (!shop) shop = await this.shopRepo.save({ name: 'Benlaishenghuo', cname: '本来生活', code: 'BL' });
     const cateOneList = await benlaiApi.fetchCate();
@@ -384,4 +386,6 @@ export class AppService {
     }
     console.log('数据更新完成');
   }
+
+  //todo 定期处理未支付订单
 }

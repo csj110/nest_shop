@@ -17,6 +17,7 @@ import { OrderModule } from './domain/order/order.module';
 import { SwiperEntity } from './entities/product/swiper.prod.entity';
 import { DetailImageEntity } from './entities/product/image.detail.entity';
 import { ShopModule } from './domain/shop/shop.module';
+import { BannerModule } from './domain/banner/banner.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ShopModule } from './domain/shop/shop.module';
     CartModule,
     OrderModule,
     ShopModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,16 +11,12 @@ export class ProdController {
   constructor(private prodSesrvice: ProdService) {}
 
   @Get('/cate')
-  async findProdByCate(@Query() queryDto: ProdCateQueryDto) {
-    console.log(queryDto);
-    return 'F';
-    // return await this.prodSesrvice.findByCate(
-    //   queryDto.cateId,
-    //   queryDto.shopId,
-    //   queryDto.page,
-    //   queryDto.perPage,
-    //   queryDto.order
-    // );
+  async findProdByCate(
+    @Query('cateId', pipInt) cateId: number,
+    @Query('pageNo', pipInt) page: number,
+    @Query('pageSize', pipInt) perPage: number
+  ) {
+    return await this.prodSesrvice.findByCate(cateId, page, perPage);
   }
 
   @Get('')

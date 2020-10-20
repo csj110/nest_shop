@@ -23,6 +23,30 @@ export class ShopEntity extends BaseEntity {
   @Column({ type: 'tinyint', default: 2, comment: '一级排序' })
   level: number;
 
+  @Column({ type: 'smallint', comment: '运费' })
+  freight: number;
+
+  @Column({ type: 'smallint', comment: '免运费价格' })
+  nfPrice: number;
+
+  @Column({ type: 'varchar', length: 30, comment: '满减字符串,单位为元末尾不能`;`,例:"80:5;100:10"', default: '' })
+  discountStr: string;
+
+  @Column({ type: 'varchar', comment: 'logo' })
+  logo: string;
+
+  @Column({ type: 'varchar', comment: '背景图片,商城展示使用' })
+  bg: string;
+
+  @Column({ type: 'varchar', length: 100, comment: '商家通知' })
+  notice: string;
+
+  @Column({ comment: '该商店是否需要分类', default: true })
+  isCate: boolean;
+
+  @Column({ type: 'varchar', length: 50, comment: '商户信用代码', default: '' })
+  creditCode: string;
+
   cart: CartitemVo[];
 }
 

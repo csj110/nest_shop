@@ -9,9 +9,9 @@ export class OrderRecordEntity extends BaseEntity {
   @CreateDateColumn()
   created: Date;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 100 })
   message: string;
 
   @ManyToOne(type => OrderEntity, order => order.records)
-  order: OrderEntity
+  order: OrderEntity;
 }

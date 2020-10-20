@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
+import { MemberService } from './member.service';
 
 // const options = {
 //   port: 6379,
@@ -31,8 +32,7 @@ import { UserModule } from '../user/user.module';
     }),
     UserModule,
   ],
-  providers: [
-    Redis, JwtStrategy],
-  exports: [Redis, PassportModule, JwtStrategy, JwtModule],
+  providers: [Redis, JwtStrategy, MemberService],
+  exports: [Redis, PassportModule, JwtStrategy, JwtModule, MemberService],
 })
 export class CommonModule {}

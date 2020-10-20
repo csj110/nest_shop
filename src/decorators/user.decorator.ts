@@ -7,5 +7,6 @@ export const User = createParamDecorator((data: unknown, ctx: ExecutionContext) 
   user.id = 1;
   user.name = 'Monte';
   user.phone = '13486827301';
+  user.memberId = '5190000215';
   return req.user || user;
 });

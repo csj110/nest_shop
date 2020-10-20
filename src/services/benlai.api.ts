@@ -1,29 +1,42 @@
-import { a } from 'a';
 import axios, { AxiosRequestConfig } from 'axios';
-import { json } from 'express';
+import { classToClassFromExist } from 'class-transformer';
+import { CreateOrderDto } from 'src/domain/order/order.api';
+import { LogRes } from 'src/vo/order.vo';
 // import querystring from 'querystring';
 const querystring = require('querystring');
 
 const http = axios.create({
   baseURL: 'http://openapitestb.benlai.com',
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
 
 http.interceptors.request.use((config: AxiosRequestConfig) => {
+  console.log(config.data);
   return config;
 });
 
-http.interceptors.response.use(resp => {
-  if (resp.data.code != 0) console.log(resp.config);
-  return resp;
-});
+http.interceptors.response.use(
+  resp => {
+    console.log(resp.status);
+    if (resp.data.code != 0) {
+      console.log('返回结果异常');
+      return Promise.reject(resp.data?.value?.sub_msg);
+    }
+    return resp;
+  },
+  err => {
+    if (err.response.data) {
+      return Promise.reject(err.response.data);
+    }
+    return Promise.reject('返回结果状态码:' + err.response.status);
+  }
+);
 
 const clientId = 'B229933192251933';
 const clientSecret = '2d4de94a2b9749a596e4599cc2beaca7';
-
+//todo token 动态获取
 let token: tokenObj = {
   token:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJjbGllbnQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoiQjIyOTkzMzE5MjI1MTkzMyIsIlBhcnRuZXJJZCI6IjE2MiIsImV4cCI6MTYwMTQ1NTkwMCwiaXNzIjoib3BlbiIsImF1ZCI6Im9wZW5hcGkifQ.eLiWtuiW6Cp0C8Sax1_oFen50yGTnjsuSQzHuxBKWZo',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJjbGllbnQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoiQjIyOTkzMzE5MjI1MTkzMyIsIlBhcnRuZXJJZCI6IjE2MiIsImV4cCI6MTYwMzI2MDgxNSwiaXNzIjoib3BlbiIsImF1ZCI6Im9wZW5hcGkifQ.sKp47F0FoKMyNPDWd3AKZ8vTk-WdLWzZYUpbcYTnbfM',
   createTime: '',
 };
 
@@ -41,11 +54,11 @@ let token: tokenObj = {
 // }
 
 const blPost = async (url: string, data?: any, config?: AxiosRequestConfig): Promise<any> => {
+  console.log(data);
   const res = await http.post(url, data, {
     headers: {
-      headers: {
-        Authorization: 'Bearer ' + token.token,
-      },
+      Authorization: 'Bearer ' + token.token,
+      'Content-Type': 'application/json',
     },
   });
   return res.data.value;
@@ -56,8 +69,10 @@ const blGet = async (url: string, data?: any): Promise<any> => {
     params: data,
     headers: {
       Authorization: 'Bearer ' + token.token,
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
+
   return resp.data.value;
 };
 
@@ -142,7 +157,10 @@ export const benlaiApi = {
     return {
       pid,
       pname,
-      cover: swipers.length > 0 ? swipers[0].img_url : '',
+      cover:
+        swipers.length > 0
+          ? swipers[0].img_url
+          : 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3122711088,2291650490&fm=26&gp=0.jpg',
       price: price * 100,
       deprcated: state.updownstatus == 'UP' ? false : true,
       inventory: 3000,
@@ -156,8 +174,40 @@ export const benlaiApi = {
       c3_name,
     };
   },
-  createOrder(p: OrderPost) {
-    return blPost('api/v2/order/create', p);
+
+  createOrder(p: CreateOrderDto) {
+    const {
+      province,
+      city,
+      county,
+      area,
+      receivername,
+      receiverphone,
+      message,
+      prods,
+      oid,
+      tPrice,
+      fPrice,
+      freight,
+    } = p;
+    const params: OrderPost = {
+      out_trade_no: oid,
+      receive_contact: receivername,
+      receive_phone: receiverphone,
+      province,
+      city,
+      county,
+      receive_address: area,
+      order_price: tPrice / 100,
+      ship_price: freight / 100,
+      order_detail: prods.map(i => ({
+        product_id: i.pid,
+        product_name: i.pname,
+        quantity: i.quantity,
+        price: i.price / 100,
+      })),
+    };
+    return blPost('api/v2/order/create', params);
   },
 
   /**
@@ -187,8 +237,23 @@ export const benlaiApi = {
   fetchFreight(p: Area) {
     return blPost('api/v2/logistics/getfreight', p);
   },
-  fetchDeliveryDetail(p: OrderId) {
-    return blGet('api/v2/logistics/get', p);
+  fetchDeliveryDetail(p: OrderId): Promise<LogRes> {
+    return blGet('api/v2/logistics/get', p).then((res: any) => {
+      const { waybill_No, shipTypeName, courierPhone, courierName, detail_list } = res.logistics_list[0] || {
+        detail_list: [],
+      };
+      const detail = detail_list.map(i => ({
+        desc: i.logisticsDescription,
+        time: i.logisticsTime,
+      }));
+      return {
+        detail,
+        courierName,
+        courierPhone,
+        freightCompName: shipTypeName,
+        waybillNo: waybill_No,
+      };
+    });
   },
 };
 

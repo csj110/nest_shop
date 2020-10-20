@@ -40,15 +40,17 @@ export class ProdService {
     return await this.prodRepo.find(query);
   }
 
-  async findByCate(cateId: number, shopId: number, page: number, perPage: number, order?) {
-    const cate = await this.cateRepo.findOne(cateId);
-    const cateIds = (await this.cateRepo.findDescendants(cate)).filter(i => i.level == 3).map(i => i.id);
+  async findByCate(cateId: number, page: number, perPage: number, order?) {
+    const cate = await this.cateRepo.create({ id: cateId });
+
+    const cates = await this.cateRepo.findDescendants(cate);
+    const cateids = cates.map(i => i.id);
     const query: FindManyOptions<ProductEntity> = {
-      select: ['price', 'pname', 'cover'],
+      select: ['price', 'pname', 'cover', 'id', 'shopId'],
       take: perPage,
       skip: perPage * (page - 1),
       order,
-      where: { shopId: shopId, cateId: In(cateIds) },
+      where: { cateId: In(cateids) },
     };
     return await this.prodRepo.find(query);
   }

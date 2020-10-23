@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { OrderEntity } from './order.entity';
-@Entity('orderproducts')
+@Entity('ygh_m_orderproducts')
 export class OrderProductEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;

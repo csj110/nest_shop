@@ -2,7 +2,7 @@ import { Column, ManyToOne, JoinColumn, Entity } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm/decorator/columns/PrimaryGeneratedColumn';
 import { ProductEntity } from './prdouct.entity';
 
-@Entity('swipers')
+@Entity('ygh_m_swipers')
 export class SwiperEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;

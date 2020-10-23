@@ -5,7 +5,7 @@ import { CateEntity } from '../category/cate.product.entity';
 import { DetailImageEntity } from './image.detail.entity';
 import { SwiperEntity } from './swiper.prod.entity';
 
-@Entity('products')
+@Entity('ygh_m_products')
 export class ProductEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;

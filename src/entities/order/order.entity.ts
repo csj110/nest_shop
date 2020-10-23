@@ -16,7 +16,7 @@ export enum OrderState {
   DECREASE_WRONG = -3,
 }
 
-@Entity('orders')
+@Entity('ygh_m_orders')
 export class OrderEntity extends AbstractEntity {
   @Column({ type: 'varchar', length: 8 })
   province: string;

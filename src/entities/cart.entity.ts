@@ -2,7 +2,7 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, Index, OneToOne, Jo
 import { ProductEntity } from './product/prdouct.entity';
 import { UserEntity } from './user.entity';
 
-@Entity('cartItem')
+@Entity('ygh_m_cartItem')
 @Index(['userId', 'shopId'])
 export class CartItemEntity extends BaseEntity {
   @PrimaryGeneratedColumn()

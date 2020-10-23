@@ -3,7 +3,7 @@ import { CartItemEntity } from '../cart.entity';
 import { ProductEntity } from '../product/prdouct.entity';
 import { BannerEntity } from './banner.entity';
 
-@Entity('shop')
+@Entity('ygh_m_shop')
 export class ShopEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'tinyint', unsigned: true })
   id: number;

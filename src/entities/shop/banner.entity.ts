@@ -1,7 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ShopEntity } from './shop.entity';
 
-@Entity('banners')
+@Entity('ygh_m_banners')
 export class BannerEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;

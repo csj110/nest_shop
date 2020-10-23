@@ -5,7 +5,7 @@ import { OrderEntity } from './order/order.entity';
 import { AddrPostEntity } from './addr/address.entity';
 import { CartItemEntity } from './cart.entity';
 
-@Entity('users')
+@Entity('ygh_m_users')
 export class UserEntity extends AbstractEntity {
   @Column({ nullable: false, default: 'no name' })
   name: string;

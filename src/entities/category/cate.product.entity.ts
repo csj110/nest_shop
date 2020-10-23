@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, TreeParent, TreeChildren, Tree, OneToMany } from 'typeorm';
 import { ProductEntity } from '../product/prdouct.entity';
 
-@Entity('cate')
+@Entity('ygh_m_cate')
 @Tree('materialized-path')
 export class CateEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })

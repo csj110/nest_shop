@@ -3,7 +3,7 @@ import { UserEntity } from '../user.entity';
 import { Expose, Exclude, classToPlain } from 'class-transformer';
 import { BasePostAddr } from './addr.base.entity';
 
-@Entity('addrpost')
+@Entity('ygh_m_addrpost')
 export class AddrPostEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;

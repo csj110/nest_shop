@@ -1,7 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { OrderEntity } from './order.entity';
 
-@Entity('order_state_record')
+@Entity('ygh_m_order_state_record')
 export class OrderRecordEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;

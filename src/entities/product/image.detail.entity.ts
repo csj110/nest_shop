@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ProductEntity } from './prdouct.entity';
 
-@Entity('detailimages')
+@Entity('ygh_m_detailimages')
 export class DetailImageEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'mediumint', unsigned: true })
   id: number;
@@ -12,7 +12,7 @@ export class DetailImageEntity extends BaseEntity {
   @Column({ type: 'tinyint' })
   sort: number;
 
-  @Column({ type: 'mediumint', unsigned: true,nullable: true })
+  @Column({ type: 'mediumint', unsigned: true, nullable: true })
   prodId: number;
 
   @ManyToOne(type => ProductEntity, p => p.detailImages)

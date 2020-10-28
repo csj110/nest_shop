@@ -8,7 +8,7 @@
   "entities": [
     "dist/**/*.entity{.ts,.js}"
   ],
-  "logging": false,
+  "logging": true,
   "autoLoadModels": true,
   "synchronize": false
 }

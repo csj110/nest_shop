@@ -19,7 +19,7 @@ export class CartController {
   }
 
   @Get('')
-  async getCartItems(@Param('shopId') shopId: number, @User() user: UserEntity) {
+  async getCartItems(@User() user: UserEntity) {
     return await this.cartService.getItems(user);
   }
 }

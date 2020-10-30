@@ -23,7 +23,7 @@ export class ProductEntity extends BaseEntity {
   price: number;
 
   @Column({ type: 'bool', comment: 'true:下架,false:上架', default: false })
-  deprcated: boolean;
+  deprecated: boolean;
 
   @Column('smallint', { default: 3000 })
   inventory: number;

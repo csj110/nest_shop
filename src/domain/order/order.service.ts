@@ -153,11 +153,11 @@ export class OrderService {
     const shop = await this.shopRepo.findOne(order.shopId);
     //* 扣除会员积分
     //todo paydate
-    // if (order.payMethod == 'universe') {
-    //   await this.checkoutUniverseOrder(order, user, shop);
-    // } else {
-    //   await this.checkoutSpecificOrder(order, user, shop);
-    // }
+    if (order.payMethod == 'universe') {
+      await this.checkoutUniverseOrder(order, user, shop);
+    } else {
+      await this.checkoutSpecificOrder(order, user, shop);
+    }
     //* 发送到商户 并且扣除会员分数
     let message = '支付';
     let orderState = OrderState.PAYED;

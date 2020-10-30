@@ -256,7 +256,7 @@ export class AppService {
                   ? images[0].path
                   : 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1575378762,3649761949&fm=26&gp=0.jpg',
                 price: price * 100,
-                deprcated: !state,
+                deprecated: !state,
                 inventory,
                 shopId: shop.id,
               });
@@ -363,7 +363,7 @@ export class AppService {
               });
             } else {
               notExist = false;
-              myProd = await this.prodRepo.merge(myProd, { pid, pname, cover, price, deprcated, inventory });
+              myProd = await this.prodRepo.merge(myProd, { pid, pname, cover, price, deprecated: deprcated, inventory });
             }
             // *新建或者更新 ,先判断商品是否是更新,更新的话,就不更新详情了
             if (notExist) {

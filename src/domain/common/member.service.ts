@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, } from 'axios';
 import { CheckoutUniverPoints, MemberPointInfoQuery, PointsObj } from 'src/interface/member.interface';
 
 const moment = require('moment');
